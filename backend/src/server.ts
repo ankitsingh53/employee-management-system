@@ -7,6 +7,8 @@ import { expressMiddleware } from '@as-integrations/express5';
 import { typeDefs } from './graphQL/schema/typeDefs.js';
 import { resolvers } from './graphQL/resolvers/resolvers.js';
 import dotenv from 'dotenv'
+import cookieParser from "cookie-parser";
+import { authenticate } from './middleware/auth.middleware.js';
 
 dotenv.config()
 
@@ -20,11 +22,21 @@ const startServer = async () => {
       resolvers
     })
     await server.start()
-    app.use(
+    app.use(cookieParser());
+     app.use(
       '/graphql',
       cors(),
       express.json(),
-      expressMiddleware(server)
+      expressMiddleware(server, {
+        context: async ({ req, res }) => {
+          const user = authenticate(req);
+          return {
+            req,
+            res,
+            user,
+          };
+        },
+      })
     );
 
     const PORT = process.env.PORT;
