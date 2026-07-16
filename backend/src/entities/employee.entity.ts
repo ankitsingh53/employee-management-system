@@ -6,13 +6,13 @@ export class Employee {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({type: "varchar", length: 200, nullable: true})
+  @Column({type: "varchar", length: 200})
   firstName!: string;
 
-  @Column({type: "varchar", length: 200, nullable: true})
+  @Column({type: "varchar", length: 200})
   lastName!: string;
 
-  @Column({type: "varchar", length: 200,  unique: true, nullable: true})
+  @Column({type: "varchar", length: 200,  unique: true})
   email!: string;
 
   @Column({type: "varchar", nullable: true})

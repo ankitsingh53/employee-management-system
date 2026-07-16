@@ -1,0 +1,35 @@
+export const adminSchema = `#graphql
+
+type Employee {
+ id: ID!
+ firstName: String!
+ lastName: String!
+ email: String!
+}
+
+type AuthResponse {
+  token: String
+  message: String
+}
+
+type Query {
+getMe: Employee
+}
+
+
+input LoginEmployeeInput {
+email: String!
+password: String!
+}
+
+type LogoutResponse {
+  success: Boolean!
+  message: String!
+}
+
+type Mutation {
+login (input: LoginEmployeeInput!): AuthResponse!
+logout: LogoutResponse!
+}
+
+`;

@@ -8,7 +8,7 @@ import { typeDefs } from './graphQL/schema/typeDefs.js';
 import { resolvers } from './graphQL/resolvers/resolvers.js';
 import dotenv from 'dotenv'
 import cookieParser from "cookie-parser";
-import { authenticate } from './middleware/auth.middleware.js';
+import { authenticate } from './middleware/authMiddleware.js';
 
 dotenv.config()
 
