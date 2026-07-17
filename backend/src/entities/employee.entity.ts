@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToMany, JoinTable } from "typeorm";
+import {Department} from '../entities/department.entity.js'
 
 
 @Entity("employees")
@@ -38,6 +39,10 @@ export class Employee {
     default: true,
   })
   isActive!: boolean;
+
+  @ManyToMany(()=>Department, (department)=>department.employees)
+  @JoinTable()
+  department!: Department[];
 
  @CreateDateColumn({
     type: "timestamp",

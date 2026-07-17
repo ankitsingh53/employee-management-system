@@ -4,7 +4,7 @@ import { Employee } from "../../entities/employee.entity.js";
 
 const authRepo = await AppDataSource.getRepository(Employee);
 
-export const authAdmin = async(email:any)=>{
+export const authAdmin = async(email:string)=>{
     const getAdmin = authRepo.findOne({
         where: {
             email,

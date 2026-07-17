@@ -1,5 +1,5 @@
 import { getAdmin } from "../../services/employee/employee.service.js";
-import { authAdmin } from "../../services/auth/auth.service.js";
+import { authAdmin } from "../../services/admin/adminService.js";
 import { generateToken } from "../../utils/jwt.js";
 
 export const adminResolvers = {
@@ -16,8 +16,19 @@ export const adminResolvers = {
   Mutation: {
     login: async (parent: any, args: any, context: any) => {
       const { email, password } = args.input;
-      if (!email.trim() || !password.trim()) {
-        throw new Error("All fields Required");
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
+      if (!email.trim()) {
+        throw new Error("Email is Required");
+      }
+      else if(!emailRegex.test(email)){
+        throw new Error("Enter valid email and must include @")
+      }
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/
+      if(!password.trim()){
+        throw new Error("Password is required")
+      }
+      else if (!passwordRegex.test(password)){
+        throw new Error("Password must be minimum 4 characters, one letter & one digit")
       }
       try {
         const admin = await authAdmin(email);
@@ -41,7 +52,6 @@ export const adminResolvers = {
         return {
           token,
           message: "You logged in Successfully",
-          admin,
         };
       } catch (error) {
         if (error instanceof Error) {

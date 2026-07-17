@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm";
 import dotenv from 'dotenv'
 import { Employee } from "../entities/employee.entity.js";
+import {Department} from "../entities/department.entity.js"
 
 dotenv.config()
 
@@ -13,5 +14,5 @@ export const AppDataSource = new DataSource({
     database: process.env.DB_DATABASE!,
     synchronize: true,
     // logging: true,
-    entities: [Employee]
+    entities: [Employee, Department]
 })
