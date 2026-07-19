@@ -29,8 +29,8 @@ type LogoutResponse {
 }
 
 type Mutation {
-login (input: LoginEmployeeInput!): AuthResponse!
-logout: LogoutResponse!
+loginAdmin (input: LoginEmployeeInput!): AuthResponse!
+logoutAdmin: LogoutResponse!
 }
 
 `;

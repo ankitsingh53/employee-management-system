@@ -14,7 +14,7 @@ export const adminResolvers = {
   },
 
   Mutation: {
-    login: async (parent: any, args: any, context: any) => {
+    loginAdmin: async (parent: any, args: any, context: any) => {
       const { email, password } = args.input;
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
       if (!email.trim()) {
@@ -61,7 +61,7 @@ export const adminResolvers = {
         }
       }
     },
-    logout: async (parent: any, args: any, context: any) => {
+    logoutAdmin: async (parent: any, args: any, context: any) => {
       context.res.clearCookie("token", {
         httpOnly: true,
         secure: true,

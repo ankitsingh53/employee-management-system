@@ -25,7 +25,13 @@ const startServer = async () => {
     app.use(cookieParser());
      app.use(
       '/graphql',
-      cors(),
+      cors({
+        origin: process.env.FRONTEND_URL,
+        credentials: true,
+        allowedHeaders: ['Content-Type', 'Authorization', 'apollo-require-preflight', 'x-apollo-operation-name'],
+        optionsSuccessStatus: 200,
+        methods: ["GET", "POST", "PUT", "DELETE"]
+      }),
       express.json(),
       expressMiddleware(server, {
         context: async ({ req, res }) => {
