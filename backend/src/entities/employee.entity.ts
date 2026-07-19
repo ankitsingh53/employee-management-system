@@ -33,6 +33,8 @@ export class Employee {
 
   @Column({type: "varchar", length: 20, default: "EMPLOYEE"})
   role!: string;
+  @Column({type: "boolean", default: false})
+  isRegistered!: boolean;
 
   @Column({
     type: 'boolean',

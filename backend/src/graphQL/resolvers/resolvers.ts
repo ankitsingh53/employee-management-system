@@ -10,6 +10,7 @@ export const resolvers = {
     ...employeeResolver.Query,
     ...userResolver.Query,
     ...profileResolver.Query,
+    ...departmentResolver.Query,
   },
 
   Mutation: {

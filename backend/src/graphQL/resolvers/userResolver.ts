@@ -48,7 +48,7 @@ export const userResolver = {
       }
       try {
         const getEmployee = await exitingEmployee(email);
-        if (getEmployee.password !== null) {
+        if (getEmployee.isRegistered) {
           throw new Error("Employee is already registered ! please login...");
         }
         const hashpass = await hashPassword(password);

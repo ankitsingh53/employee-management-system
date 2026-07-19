@@ -27,6 +27,7 @@ export const saveEmployee = async (email: string, password: string) => {
 
   if (getEmployee) {
     getEmployee.password = password;
+    getEmployee.isRegistered = true;
 
     await userRepo.save(getEmployee);
   }

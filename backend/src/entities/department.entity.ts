@@ -4,7 +4,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Entity,
-  OneToMany,
   ManyToMany,
 } from "typeorm";
 import { Employee } from "./employee.entity.js";

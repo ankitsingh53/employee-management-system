@@ -21,7 +21,7 @@ export const departmentSchema = `#graphql
    }
 
    type Mutation {
-    addDepartment(input:CreateDepartment!): Department
+    addDepartment(input:CreateDepartment!): Department!
     updateDepartment(input:UpdateDepartment!):Department
     deleteDepartment(id:ID!): DeleteResponse
    }
