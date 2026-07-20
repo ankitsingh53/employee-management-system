@@ -3,27 +3,60 @@ import BackButton from "../BackButton";
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { LOGIN_ADMIN } from "../../apollo/mutations/adminMutation";
+import { data, useNavigate } from "react-router-dom";
 
 type FormData = {
   email: string;
   password: string;
 };
+interface FormErrors {
+  email?:string,
+  password?:string
+}
 
 const AdminLogin = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
   });
-  const [loginAdmin, {loading, error, data}] = useMutation(LOGIN_ADMIN);
-
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [loginAdmin, {loading}] = useMutation(LOGIN_ADMIN);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({...errors, [e.target.name]:""})
   };
-    console.log(data)
 
+  const customeValidate = ()=>{
+    const formErrors: FormErrors = {};
+    let isValid = true;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
 
+      if (!formData.email.trim()) {
+        formErrors.email = "Email is mandatory";
+        isValid = false;
+      }
+      else if(!emailRegex.test(formData.email)){
+        formErrors.email = "Enter valid email address and must include @";
+        isValid = false;
+      }
+      if(!formData.password.trim()){
+        formErrors.password= "Password is mandatory";
+        isValid = false;
+      }
+      else if (!passwordRegex.test(formData.password)){
+        formErrors.password = "Password must be minimum 4 characters, one letter & one digit";
+        isValid = false;
+      }
+      setErrors(formErrors);
+      return isValid;
+    };
+  
   const handleSubmit = async (e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
+    let valid = customeValidate();
+    if(!valid) return;
     try {
       const {data} = await loginAdmin({
         variables: {
@@ -31,10 +64,17 @@ const AdminLogin = () => {
         }
       })
       console.log(data)
+
+    //   if (data?.loginAdmin?.message) {
+    //   alert(data.loginAdmin.message);
+
+    //   navigate("/admin/dashboard");
+    // }
     } catch (err) {
       console.log(err)
     }
   }
+
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
       {/* Left Side */}
@@ -120,6 +160,7 @@ const AdminLogin = () => {
               onChange={handleChange}
               autoComplete="on"
             />
+            {errors.email && <p style={{color:'red'}}>{errors.email}</p>}
 
             <Typography sx={{ mb: 1, fontWeight: 500 }}>Password</Typography>
 
@@ -132,6 +173,7 @@ const AdminLogin = () => {
               type="password"
               autoComplete="on"
             />
+            {errors.password && <p style={{color:'red'}}>{errors.password}</p>}
 
             {/* <Box
             sx={{
@@ -166,8 +208,9 @@ const AdminLogin = () => {
                   bgcolor: "#0F164C",
                 },
               }}
+              disabled={loading}
             >
-              Sign In
+             {loading ? "Signing In..." : "Sign In"}
             </Button>
           </Box>
 

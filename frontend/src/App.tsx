@@ -4,7 +4,8 @@ import EmployeeLogin from "./components/employee/EmployeeLogin";
 import EmployeeRegister from "./components/employee/EmployeeRegister";
 import Home from "./components/Home";
 import AdminDashboard from "./components/admin/AdminDashboard";
-import DashboardLayout from "./components/DAshboardLayout";
+import DashboardLayout from "./components/DashboardLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
@@ -15,7 +16,14 @@ const App = () => {
         <Route path="/employee/register" element={<EmployeeRegister />} />
         <Route path="/employee/login" element={<EmployeeLogin />} />
         <Route element={<DashboardLayout />}>
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Routes>
       {/* <Sidebar/> */}

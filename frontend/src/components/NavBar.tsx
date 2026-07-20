@@ -5,8 +5,11 @@ import {
   Avatar,
   Box,
 } from "@mui/material";
+import { useSelector } from "react-redux";
+import type { RootState } from "../golbalStore/store";
 
 const Navbar = () => {
+  const user = useSelector((state:RootState)=>state.auth.user)
   return (
     <AppBar
       position="fixed"
@@ -34,9 +37,9 @@ const Navbar = () => {
           ml:2
         }}
         >
-          <Avatar>A</Avatar>
+          <Avatar>{user?.firstName[0].toUpperCase()}</Avatar>
 
-          <Typography>Admin</Typography>
+          <Typography>{user?.firstName}</Typography>
         </Box>
       </Toolbar>
     </AppBar>
@@ -44,3 +47,57 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
+
+// import {
+//   AppBar,
+//   Toolbar,
+//   Typography,
+//   Box,
+//   Avatar,
+//   Button,
+// } from "@mui/material";
+
+// const Navbar = () => {
+//   return (
+//     <AppBar position="fixed">
+//       <Toolbar>
+//         {/* Logo */}
+//         <Typography variant="h6" sx={{fontWeight:"bold"}}>
+//           EMS
+//         </Typography>
+
+//         {/* Title */}
+//         <Typography
+//           variant="h6"
+//           sx={{
+//             ml: 3,
+//             flexGrow: 1,
+//           }}
+//         >
+//           Employee Management System
+//         </Typography>
+
+//         <Box
+//         sx={{
+//           display:"flex",
+//           alignItems:"center",
+//           gap:2
+//         }}
+          
+//         >
+//           <Avatar>A</Avatar>
+
+//           <Typography>Admin</Typography>
+
+//           <Button color="inherit">
+//             Logout
+//           </Button>
+//         </Box>
+//       </Toolbar>
+//     </AppBar>
+//   );
+// };
+
+// export default Navbar;

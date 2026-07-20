@@ -4,7 +4,6 @@ export const LOGIN_ADMIN = gql`
   mutation LoginAdmin($input: LoginEmployeeInput!) {
   loginAdmin(input: $input) {
     message
-    token
   }
 }
 `;
