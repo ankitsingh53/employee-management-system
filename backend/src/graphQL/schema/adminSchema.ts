@@ -9,8 +9,7 @@ type Employee {
 }
 
 type AuthResponse {
-  token: String
-  message: String
+  message: String!
 }
 
 type Query {

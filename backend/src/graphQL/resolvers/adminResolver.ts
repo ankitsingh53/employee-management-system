@@ -28,7 +28,7 @@ export const adminResolvers = {
         throw new Error("Password is required")
       }
       else if (!passwordRegex.test(password)){
-        throw new Error("Password must be minimum 4 characters, one letter & one digit")
+        throw new Error("Password must be minimum 4 characters, 1 letter & 1 digit")
       }
       try {
         const admin = await authAdmin(email);
