@@ -19,12 +19,12 @@ const AdminDashboard = () => {
     }
   }, [data, dispatch]);
 
-  console.log(data);
-  console.log(user)
+  // console.log(data);
+  // console.log(user)
 
   if (loading) return <h2>Loading...</h2>;
 
-  if (error) return <h2>Unauthorized</h2>;
+  if (error) return <h2>Not Signed in or some error</h2>;
   return (
     <>
       <Typography variant="h4" sx={{ fontWeight: 700 }} gutterBottom>

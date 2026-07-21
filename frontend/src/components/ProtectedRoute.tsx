@@ -7,12 +7,19 @@ interface Props {
 }
 
 const ProtectedRoute = ({children}:Props) => {
-    const isAuthenticated = useSelector((state:RootState)=>state.auth.isAuthenticated)
+    const {isAuthenticated, loading} = useSelector((state:RootState)=>state.auth)
+    
+    console.log(loading)
+    console.log(isAuthenticated)
+
+    if(loading){
+        return <>Loading...</>;
+    }
 
     if(!isAuthenticated){
-        return <Navigate to="/" replace/>
+        return <Navigate to="/" replace/>;
     }
-    return <>{children}</>
+    return <>{children}</>;
 }
 
-export default ProtectedRoute
+export default ProtectedRoute;

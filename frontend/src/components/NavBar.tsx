@@ -1,103 +1,69 @@
+import { useState } from "react";
 import {
   AppBar,
   Toolbar,
   Typography,
-  Avatar,
   Box,
+  Avatar,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import type { RootState } from "../golbalStore/store";
 
-const Navbar = () => {
-  const user = useSelector((state:RootState)=>state.auth.user)
+const NavBar = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <AppBar
       position="fixed"
       sx={{
-        ml: "240px",
-        width: "calc(100% - 240px)",
-        background: "#131B63",
+        bgcolor: "#131B63",
       }}
     >
-      <Toolbar>
-        <Typography
-          variant="h6"
-          sx={{
-            flexGrow: 1,
-          }}
-        >
+      <Toolbar
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          padding: "15px",
+        }}
+      >
+        <Typography variant="h6" sx={{ fontWeight: "600" }}>
           Employee Management System
         </Typography>
 
         <Box
-        sx={{
-          display:"flex",
-          alignItems:"center",
-          gap: 1,
-          ml:2
-        }}
+          onClick={handleClick}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            cursor: "pointer",
+          }}
         >
-          <Avatar>{user?.firstName[0].toUpperCase()}</Avatar>
+          <Avatar>{user?.firstName?.charAt(0).toUpperCase()}</Avatar>
 
           <Typography>{user?.firstName}</Typography>
         </Box>
+
+        <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+          <MenuItem onClick={handleClose}>Logout</MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );
 };
 
-export default Navbar;
-
-
-
-// import {
-//   AppBar,
-//   Toolbar,
-//   Typography,
-//   Box,
-//   Avatar,
-//   Button,
-// } from "@mui/material";
-
-// const Navbar = () => {
-//   return (
-//     <AppBar position="fixed">
-//       <Toolbar>
-//         {/* Logo */}
-//         <Typography variant="h6" sx={{fontWeight:"bold"}}>
-//           EMS
-//         </Typography>
-
-//         {/* Title */}
-//         <Typography
-//           variant="h6"
-//           sx={{
-//             ml: 3,
-//             flexGrow: 1,
-//           }}
-//         >
-//           Employee Management System
-//         </Typography>
-
-//         <Box
-//         sx={{
-//           display:"flex",
-//           alignItems:"center",
-//           gap:2
-//         }}
-          
-//         >
-//           <Avatar>A</Avatar>
-
-//           <Typography>Admin</Typography>
-
-//           <Button color="inherit">
-//             Logout
-//           </Button>
-//         </Box>
-//       </Toolbar>
-//     </AppBar>
-//   );
-// };
-
-// export default Navbar;
+export default NavBar;

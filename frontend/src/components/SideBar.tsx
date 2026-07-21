@@ -1,22 +1,16 @@
 import {
-  Drawer,
+  Box,
+  Divider,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Toolbar,
-  Divider,
 } from "@mui/material";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import EventNoteIcon from "@mui/icons-material/EventNote";
-import AssessmentIcon from "@mui/icons-material/Assessment";
-import SettingsIcon from "@mui/icons-material/Settings";
-import LogoutIcon from "@mui/icons-material/Logout";
-
-const drawerWidth = 240;
 
 const menuItems = [
   {
@@ -35,135 +29,59 @@ const menuItems = [
     text: "Leave Requests",
     icon: <EventNoteIcon />,
   },
-  {
-    text: "Reports",
-    icon: <AssessmentIcon />,
-  },
-  {
-    text: "Settings",
-    icon: <SettingsIcon />,
-  },
 ];
 
-const Sidebar = () => {
+const SideBar = () => {
   return (
-    <Drawer
-      variant="permanent"
+    <Box
       sx={{
-        width: drawerWidth,
+        width: 290,
+        minHeight: "100%",
+        bgcolor: "#fff",
+        borderRight: "1px solid #E5E7EB",
         flexShrink: 0,
-
-        "& .MuiDrawer-paper": {
-          width: drawerWidth,
-          boxSizing: "border-box",
-          background: "#fff",
-        },
+        marginTop: " 20px",
+        marginLeft: "10px",
       }}
     >
-      <Toolbar />
+      <List sx={{ p: 2 }}>
+        {menuItems.map((item, index) => (
+          <Box key={item.text}>
+            <ListItemButton
+              selected={index === 0}
+              sx={{
+                borderRadius: 2,
+                py: 1.2,
 
-      <List>
-        {menuItems.map((item) => (
-          <ListItemButton key={item.text}>
-            <ListItemIcon>{item.icon}</ListItemIcon>
+                "&:hover": {
+                  bgcolor: "#F5F5F5",
+                },
 
-            <ListItemText primary={item.text} />
-          </ListItemButton>
+                "&.Mui-selected": {
+                  bgcolor: "#EEF4FF",
+
+                  "& .MuiListItemIcon-root": {
+                    color: "#1976D2",
+                  },
+
+                  "& .MuiTypography-root": {
+                    color: "#1976D2",
+                    fontWeight: 600,
+                  },
+                },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
+
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+
+            {index !== menuItems.length - 1 && <Divider sx={{ my: 1 }} />}
+          </Box>
         ))}
       </List>
-
-      <Divider />
-
-      <List>
-        <ListItemButton>
-          <ListItemIcon>
-            <LogoutIcon color="error" />
-          </ListItemIcon>
-
-          <ListItemText primary="Logout" />
-        </ListItemButton>
-      </List>
-    </Drawer>
+    </Box>
   );
 };
 
-export default Sidebar;
-
-
-// import {
-//   Drawer,
-//   Toolbar,
-//   List,
-//   ListItemButton,
-//   ListItemIcon,
-//   ListItemText,
-// } from "@mui/material";
-
-// import DashboardIcon from "@mui/icons-material/Dashboard";
-// import PeopleIcon from "@mui/icons-material/People";
-// import ApartmentIcon from "@mui/icons-material/Apartment";
-// import EventNoteIcon from "@mui/icons-material/EventNote";
-// import AssessmentIcon from "@mui/icons-material/Assessment";
-// import SettingsIcon from "@mui/icons-material/Settings";
-
-// const drawerWidth = 230;
-
-// const menu = [
-//   {
-//     text: "Dashboard",
-//     icon: <DashboardIcon />,
-//   },
-//   {
-//     text: "Employees",
-//     icon: <PeopleIcon />,
-//   },
-//   {
-//     text: "Departments",
-//     icon: <ApartmentIcon />,
-//   },
-//   {
-//     text: "Leave Requests",
-//     icon: <EventNoteIcon />,
-//   },
-//   {
-//     text: "Reports",
-//     icon: <AssessmentIcon />,
-//   },
-//   {
-//     text: "Settings",
-//     icon: <SettingsIcon />,
-//   },
-// ];
-
-// const Sidebar = () => {
-//   return (
-//     <Drawer
-//       variant="permanent"
-//       sx={{
-//         width: drawerWidth,
-
-//         "& .MuiDrawer-paper": {
-//           width: drawerWidth,
-//           boxSizing: "border-box",
-//         },
-//       }}
-//     >
-//       {/* Makes the sidebar start below the AppBar */}
-//       <Toolbar />
-
-//       <List>
-//         {menu.map((item) => (
-//           <ListItemButton key={item.text}>
-//             <ListItemIcon>
-//               {item.icon}
-//             </ListItemIcon>
-
-//             <ListItemText primary={item.text} />
-//           </ListItemButton>
-//         ))}
-//       </List>
-//     </Drawer>
-//   );
-// };
-
-// export default Sidebar;
+export default SideBar;

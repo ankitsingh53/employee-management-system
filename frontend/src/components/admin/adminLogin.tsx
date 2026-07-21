@@ -3,7 +3,11 @@ import BackButton from "../BackButton";
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { LOGIN_ADMIN } from "../../apollo/mutations/adminMutation";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useApolloClient } from "@apollo/client/react";
+import { useDispatch } from "react-redux";
+import { setAuth } from "../../features/auth/authSlice";
+import { GET_ADMIN } from "../../apollo/queries/adminQuery";
 
 type FormData = {
   email: string;
@@ -16,6 +20,9 @@ interface FormErrors {
 
 const AdminLogin = () => {
   const navigate = useNavigate();
+  const client = useApolloClient();
+  const dispatch = useDispatch();
+  const[response, setResponse] = useState("")
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
@@ -63,16 +70,25 @@ const AdminLogin = () => {
           input: formData
         }
       })
-      console.log(data)
-
-    //   if (data?.loginAdmin?.message) {
-    //   alert(data.loginAdmin.message);
-
-    //   navigate("/admin/dashboard");
-    // }
+      if(data?.loginAdmin?.message){
+        const adminData = await client.query({
+          query: GET_ADMIN,
+          fetchPolicy: "network-only",
+        })
+        dispatch(setAuth(adminData.data.getMe))
+        navigate("/admin/dashboard");
+      }
     } catch (err) {
-      console.log(err)
+      if(err instanceof Error){
+        setResponse(err.message)
+      }else {
+        console.log(err)
+      }
     }
+  }
+
+  if(loading){
+    return <p>Loading...</p>
   }
 
   return (
@@ -212,6 +228,7 @@ const AdminLogin = () => {
             >
              {loading ? "Signing In..." : "Sign In"}
             </Button>
+            {response && <p style={{color:'red'}}>{response}</p>}
           </Box>
 
           <Typography

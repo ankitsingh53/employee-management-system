@@ -1,74 +1,34 @@
 import { Box, Toolbar } from "@mui/material";
 import { Outlet } from "react-router-dom";
 
-import Sidebar from "./SideBar";
-import Navbar from "./NavBar";
+import NavBar from "./NavBar";
+import SideBar from "./SideBar";
 
 const DashboardLayout = () => {
   return (
     <>
-    <Box sx={{display:"flex"}}>
-      <Navbar />
-      <Sidebar />
-
+      <NavBar />
+      <Toolbar />
       <Box
-        component="main"
         sx={{
-          flexGrow: 1,
-          p: 3,
-          background: "#f5f5f5",
-          minHeight: "100vh",
+          display: "flex",
+          minHeight: "calc(100vh - 64px)",
+          bgcolor: "#F8FAFC",
         }}
       >
-        <Toolbar />
-
-        <Outlet />
+        <SideBar />
+        <Box
+          component="main"
+          sx={{
+            flex: 1,
+            p: 4,
+          }}
+        >
+          <Outlet />
+        </Box>
       </Box>
-    </Box>
     </>
   );
 };
 
 export default DashboardLayout;
-
-
-// import { Box, Toolbar } from "@mui/material";
-// import { Outlet } from "react-router-dom";
-
-// import Navbar from "./NavBar";
-// import Sidebar from "./SideBar";
-
-// const drawerWidth = 230;
-
-// const DashboardLayout = () => {
-//   return (
-//     <>
-//       {/* Full Width AppBar */}
-//       <Navbar />
-
-//       <Box sx={{display:"flex"}}>
-//         {/* Sidebar */}
-//         <Sidebar />
-
-//         {/* Main Content */}
-//         <Box
-//           component="main"
-//           sx={{
-//             flexGrow: 1,
-//             ml: `${drawerWidth}px`,
-//             p: 3,
-//             bgcolor: "#f5f5f5",
-//             minHeight: "100vh",
-//           }}
-//         >
-//           {/* Space below AppBar */}
-//           <Toolbar />
-
-//           <Outlet />
-//         </Box>
-//       </Box>
-//     </>
-//   );
-// };
-
-// export default DashboardLayout;
