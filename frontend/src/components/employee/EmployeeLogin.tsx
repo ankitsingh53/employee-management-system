@@ -40,7 +40,7 @@ const EmployeeLogin = () => {
     }
   };
 
-  console.log(data)
+  // console.log(data)
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>

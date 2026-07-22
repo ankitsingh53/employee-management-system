@@ -13,7 +13,7 @@ const DashboardLayout = () => {
         sx={{
           display: "flex",
           minHeight: "calc(100vh - 64px)",
-          bgcolor: "#F8FAFC",
+          bgcolor: "#F3F4F6",
         }}
       >
         <SideBar />

@@ -6,6 +6,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import { NavLink } from "react-router-dom";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
@@ -16,18 +17,22 @@ const menuItems = [
   {
     text: "Dashboard",
     icon: <DashboardIcon />,
+    path: "/admin/dashboard",
   },
   {
     text: "Employees",
     icon: <PeopleIcon />,
+    path: "/admin/employees",
   },
   {
     text: "Departments",
     icon: <ApartmentIcon />,
+    path: "/admin/add-department",
   },
   {
     text: "Leave Requests",
     icon: <EventNoteIcon />,
+    path:"/admin/leave"
   },
 ];
 
@@ -37,35 +42,34 @@ const SideBar = () => {
       sx={{
         width: 290,
         minHeight: "100%",
-        bgcolor: "#fff",
-        borderRight: "1px solid #E5E7EB",
+        bgcolor: "#F9FAFB",
+        borderRight: "1px solid #D1D5DB",
         flexShrink: 0,
-        marginTop: " 20px",
-        marginLeft: "10px",
       }}
     >
-      <List sx={{ p: 2 }}>
+      <List sx={{ p: 2, marginTop: '30px' }}>
         {menuItems.map((item, index) => (
           <Box key={item.text}>
             <ListItemButton
-              selected={index === 0}
+              component={NavLink}
+              to={item.path}
               sx={{
                 borderRadius: 2,
                 py: 1.2,
 
                 "&:hover": {
-                  bgcolor: "#F5F5F5",
+                  bgcolor: "#ECEFF1",
                 },
 
                 "&.Mui-selected": {
-                  bgcolor: "#EEF4FF",
+                  bgcolor: "#E5E7EB",
 
                   "& .MuiListItemIcon-root": {
                     color: "#1976D2",
                   },
 
                   "& .MuiTypography-root": {
-                    color: "#1976D2",
+                    color: "#374151",
                     fontWeight: 600,
                   },
                 },

@@ -15,4 +15,44 @@ export const LOGOUT_ADMIN = gql`
       success
     }
    }
+`;
+
+export const ADD_EMPLOYEE = gql`
+  mutation AddEmployee($input:CreateEmployee!){
+    createEmployee(input: $input){
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    designation,
+    salary,
+    joiningDate,
+    }
+  }
 `
+
+export const ADD_DEPART = gql`
+  mutation AddDepartment($input: CreateDepartment!){
+    addDepartment(input: $input){
+       id
+       department
+    }
+  }
+`;
+
+export const UPDATE_DEPARTMENT = gql`
+  mutation UpdateDepartment($input: UpdateDepartment!){
+   updateDepartment(input: $input){
+    id
+    department
+   }
+  }
+`;
+
+export const DELETE_DEPARTMENT = gql`
+  mutation DeleteDepartment($id: ID!){
+   deleteDepartment(id: $id){
+      message
+    }
+  }
+`;

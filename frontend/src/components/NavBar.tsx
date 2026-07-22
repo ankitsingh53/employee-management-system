@@ -37,10 +37,10 @@ const NavBar = () => {
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          padding: "15px",
+          padding: '15px',
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: "600" }}>
+        <Typography variant="h6" sx={{fontWeight:'500', letterSpacing: 0.5}}>
           Employee Management System
         </Typography>
 
@@ -53,13 +53,24 @@ const NavBar = () => {
             cursor: "pointer",
           }}
         >
-          <Avatar>{user?.firstName?.charAt(0).toUpperCase()}</Avatar>
+          <Avatar
+          sx={{
+    bgcolor: "#6B7280",
+    color: "#fff",
+  }}
+          >{user?.firstName?.charAt(0).toUpperCase()}</Avatar>
 
           <Typography>{user?.firstName}</Typography>
         </Box>
 
-        <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-          <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={handleClose}>
+            Logout
+          </MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

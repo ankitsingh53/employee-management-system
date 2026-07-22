@@ -11,3 +11,29 @@ export const GET_ADMIN = gql`
    }
    }
 `;
+
+export const GET_EMPLOYEE = gql`
+  query GetEmployee {
+    getEmployee {
+    id
+    firstName
+    lastName
+    email
+    phoneNumber
+    designation
+    salary
+    joiningDate
+    }
+  }
+`;
+
+export const GET_DEPARTMENT = gql`
+  query GetDepartment {
+    viewDepartment {
+      id
+      department
+    }
+  }
+`;
+
+

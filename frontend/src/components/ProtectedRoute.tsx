@@ -9,8 +9,8 @@ interface Props {
 const ProtectedRoute = ({children}:Props) => {
     const {isAuthenticated, loading} = useSelector((state:RootState)=>state.auth)
     
-    console.log(loading)
-    console.log(isAuthenticated)
+    // console.log(loading)
+    // console.log(isAuthenticated)
 
     if(loading){
         return <>Loading...</>;

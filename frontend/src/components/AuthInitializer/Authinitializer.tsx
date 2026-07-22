@@ -14,13 +14,13 @@ interface Props {
     useEffect(()=>{
         const initialize = async ()=>{
             try {
-                console.log("inside authInitializer")
+                // console.log("inside authInitializer")
                 dispatch(setLoading(true));
                 const {data} = await client.query({
                     query: GET_ADMIN,
                     fetchPolicy: 'network-only'
                 })
-                console.log(data)
+                // console.log(data)
                 if(data?.getMe){
                     dispatch(setAuth(data.getMe))
                 }
@@ -35,7 +35,7 @@ interface Props {
         }
         initialize();
     },[client, dispatch])
-    console.log("run before useEffect");
+    // console.log("run before useEffect");
   return <>{children}</>;
 };
 export default Authinitializer;
