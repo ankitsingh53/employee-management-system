@@ -252,7 +252,7 @@ const EmployeeRegister = () => {
             Already have an account?{" "}
             <Link
               component="button"
-              onClick={() => navigate("/employee/login")}
+              onClick={() => navigate("/user/login")}
             >
               Login
             </Link>

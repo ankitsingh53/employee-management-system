@@ -1,24 +1,20 @@
 import { useSelector } from "react-redux";
-import type { RootState } from "../glolbalStore/store";
 import { Navigate } from "react-router-dom";
+import type { RootState } from "../glolbalStore/store"
 import { Box, CircularProgress } from "@mui/material";
 
 interface Props {
   children: React.ReactNode;
 }
 
-const ProtectedRoute = ({ children }: Props) => {
-  const { isAuthenticated, loading } = useSelector(
-    (state: RootState) => state.auth,
+const AdminRoute = ({ children }: Props) => {
+  const { isAuthenticated, loading, role } = useSelector(
+    (state: RootState) => state.auth
   );
 
-  // console.log(loading)
-  // console.log(isAuthenticated)
-
   if (loading) {
-    return (
-      <>
-        <Box
+    return <>
+    <Box
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -28,14 +24,18 @@ const ProtectedRoute = ({ children }: Props) => {
         >
           <CircularProgress />
         </Box>
-      </>
-    );
+    </>;
   }
 
   if (!isAuthenticated) {
+    return <Navigate to="/admin/login" replace />;
+  }
+
+  if (role !== "ADMIN") {
     return <Navigate to="/" replace />;
   }
+
   return <>{children}</>;
 };
 
-export default ProtectedRoute;
+export default AdminRoute;

@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { apolloClient } from "./apollo/apolloClient.tsx";
 import { Provider } from "react-redux";
 import App from "./App.tsx";
-import { store } from "./golbalStore/store.tsx";
+import { store } from "./glolbalStore/store.tsx";
 import Authinitializer  from "./components/AuthInitializer/Authinitializer.tsx";
 import './index.css';
 

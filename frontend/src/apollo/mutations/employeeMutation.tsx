@@ -18,4 +18,13 @@ export const LOGIN_EMPLOYEE = gql`
         message
      }
   }
-`
+`;
+
+export const LOGOUT_EMPLOYEE = gql`
+  mutation LogoutEmployee {
+  logoutEmployee {
+    success
+    message
+  }
+}
+`;

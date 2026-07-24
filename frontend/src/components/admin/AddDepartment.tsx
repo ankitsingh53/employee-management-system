@@ -11,7 +11,6 @@ import {
   TableBody,
 } from "@mui/material";
 
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client/react";
 import {

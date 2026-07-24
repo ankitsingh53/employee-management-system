@@ -18,36 +18,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import { GET_EMPLOYEE } from "../../apollo/queries/adminQuery";
 
-// const employees = [
-//   {
-//     id: 101,
-//     name: "Rahul Sharma",
-//     email: "rahul@gmail.com",
-//     department: "IT",
-//     status: "Active",
-//   },
-//   {
-//     id: 102,
-//     name: "Amit Kumar",
-//     email: "amit@gmail.com",
-//     department: "HR",
-//     status: "Active",
-//   },
-//   {
-//     id: 103,
-//     name: "John Doe",
-//     email: "john@gmail.com",
-//     department: "Finance",
-//     status: "Inactive",
-//   },
-// ];
-
 const Employees = () => {
     const navigate = useNavigate();
     const {data, loading, error} = useQuery(GET_EMPLOYEE);
     console.log(data)
   return (
-    <Box>
+    <Box sx={{width: '100%'}}>
 
       {/* Header */}
 

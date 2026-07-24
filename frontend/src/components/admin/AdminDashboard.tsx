@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { setAuth } from "../../features/auth/authSlice";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../golbalStore/store";
+import type { RootState } from "../../glolbalStore/store";
 import PeopleIcon from "@mui/icons-material/People";
 import PersonIcon from "@mui/icons-material/Person";
 import BusinessIcon from "@mui/icons-material/Business";

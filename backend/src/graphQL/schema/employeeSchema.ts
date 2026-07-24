@@ -10,7 +10,13 @@ export const employeeSchema = `#graphql
     salary: Float!
     joiningDate: String!
     isActive: Boolean!
+    department: [Department]
   }
+
+  type Department {
+     id: ID!
+     department: String!
+   }
 
   type Query {
     getEmployee: [Employee!]!
@@ -29,6 +35,7 @@ export const employeeSchema = `#graphql
     designation: String!
     salary: Float!
     joiningDate: String!
+    departmentId: Int
   }
 
   input UpdateEmployee {

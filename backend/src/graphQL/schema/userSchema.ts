@@ -4,6 +4,7 @@ type Employee {
  firstName: String!
  lastName: String!
  email: String!
+ role: String!
 }
 type AuthResponse {
   token: String

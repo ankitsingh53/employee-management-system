@@ -76,8 +76,9 @@ const AdminLogin = () => {
           fetchPolicy: "network-only",
         })
         dispatch(setAuth(adminData.data.getMe))
-        navigate("/admin/dashboard");
+       
       }
+       navigate("/admin/dashboard");
     } catch (err) {
       if(err instanceof Error){
         setResponse(err.message)
@@ -88,7 +89,16 @@ const AdminLogin = () => {
   }
 
   if(loading){
-    return <p>Loading...</p>
+    return <Box
+    sx={{
+display:"flex",
+    justifyContent:"center",
+    alignItems:"center",
+    height:"100vh"
+    }}
+>
+    Loading...
+</Box>
   }
 
   return (
@@ -160,23 +170,42 @@ const AdminLogin = () => {
               Admin Login
             </Typography>
 
-            <Typography color="text.secondary" sx={{ mb: 4 }}>
+            <Typography color="text.secondary" sx={{ mb: 3 }}>
               Sign in to manage the organization.
             </Typography>
-
+            {/* {response && <p style={{color:'red'}}>{response}</p>} */}
+            {response && (
+                <Typography
+                  variant="overline"
+                  gutterBottom
+                  sx={{ display: "block", color: "red" }}
+                >
+                  {response}
+                </Typography>
+              )}
             <Typography sx={{ mb: 1, fontWeight: 500 }}>Email</Typography>
 
             <TextField
               fullWidth
               placeholder="Enter your email"
               type="email"
-              sx={{ mb: 3 }}
+              sx={{ mb: 2 }}
               name="email"
               value={formData.email}
               onChange={handleChange}
               autoComplete="on"
             />
-            {errors.email && <p style={{color:'red'}}>{errors.email}</p>}
+            {/* {errors.email && <p style={{color:'red'}}>{errors.email}</p>}
+             */}
+             {errors.email && (
+                <Typography
+                  variant="overline"
+                  gutterBottom
+                  sx={{ display: "block", color: "red" }}
+                >
+                  {errors.email}
+                </Typography>
+              )}
 
             <Typography sx={{ mb: 1, fontWeight: 500 }}>Password</Typography>
 
@@ -189,7 +218,16 @@ const AdminLogin = () => {
               type="password"
               autoComplete="on"
             />
-            {errors.password && <p style={{color:'red'}}>{errors.password}</p>}
+            {/* {errors.password && <p style={{color:'red'}}>{errors.password}</p>} */}
+            {errors.password && (
+                <Typography
+                  variant="overline"
+                  gutterBottom
+                  sx={{ display: "block", color: "red" }}
+                >
+                  {errors.password}
+                </Typography>
+              )}
 
             {/* <Box
             sx={{
@@ -228,7 +266,7 @@ const AdminLogin = () => {
             >
              {loading ? "Signing In..." : "Sign In"}
             </Button>
-            {response && <p style={{color:'red'}}>{response}</p>}
+            
           </Box>
 
           <Typography

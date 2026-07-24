@@ -1,36 +1,82 @@
 import { Box, Button, Link, Paper, TextField, Typography } from "@mui/material";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BackButton from "../BackButton";
 import React, { useState } from "react";
-import { useMutation } from "@apollo/client/react";
+import { useApolloClient, useMutation } from "@apollo/client/react";
 import { LOGIN_EMPLOYEE } from "../../apollo/mutations/employeeMutation";
+import { useDispatch } from "react-redux";
+import { GET_USER } from "../../apollo/queries/employeeQuery";
+import { setAuth } from "../../features/auth/authSlice";
 
 interface FormData {
-  email: "";
-  password: "";
+  email: string;
+  password: string ;
+}
+interface FormError {
+  email?: string;
+  password?: string ;
 }
 
 const EmployeeLogin = () => {
   const navigate = useNavigate();
-  const [loginEmployee, { loading }] = useMutation(LOGIN_EMPLOYEE);
+  const client = useApolloClient();
+  const dispatch = useDispatch();
+  const [loginEmployee] = useMutation(LOGIN_EMPLOYEE);
   const [response, setResponse] = useState<String>("");
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
   });
-
+  const [errors, setErrors] = useState<FormError>({});
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({...errors, [e.target.name]:""})
+  };
+
+  const customeValidate = () => {
+    const formErrors:FormError = {};
+    let isValid = true;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
+    if (!formData.email.trim()) {
+      formErrors.email = "Email is mandatory";
+      isValid = false;
+    } else if (!emailRegex.test(formData.email)) {
+      formErrors.email = "Enter valid email address and must include @";
+      isValid = false;
+    }
+    if (!formData.password.trim()) {
+      formErrors.password = "Password is mandatory";
+      isValid = false;
+    } else if (!passwordRegex.test(formData.password)) {
+      formErrors.password =
+        "Password must be minimum 4 characters, one letter & one digit";
+      isValid = false;
+    }
+    setErrors(formErrors);
+    return isValid;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const valid = customeValidate();
+    if(!valid) return;
     try {
-      const data = await loginEmployee({
+      const {data} = await loginEmployee({
         variables: {
           input: formData,
         },
       });
+      if (data?.loginEmployee?.message) {
+      const userData = await client.query({
+        query: GET_USER,
+        fetchPolicy: "network-only",
+      });
+
+      dispatch(setAuth(userData.data.getUser));
+
+      navigate("/user/dashboard");
+    }
     } catch (error) {
       if (error instanceof Error) {
         setResponse(error.message);
@@ -39,8 +85,6 @@ const EmployeeLogin = () => {
       }
     }
   };
-
-  // console.log(data)
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -102,6 +146,7 @@ const EmployeeLogin = () => {
             component="form"
             noValidate
             onSubmit={handleSubmit}
+            
           >
             <Typography
               sx={{
@@ -117,16 +162,35 @@ const EmployeeLogin = () => {
               Sign in to access your account.
             </Typography>
 
+            {response && (
+                <Typography
+                  variant="overline"
+                  gutterBottom
+                  sx={{ display: "block", color: "red" }}
+                >
+                  {response}
+                </Typography>
+                 )}
             <Typography sx={{ mb: 1, fontWeight: 500 }}>Email</Typography>
 
             <TextField
               fullWidth
               placeholder="Enter your email"
-              sx={{ mb: 3 }}
+              sx={{ mb: 2 }}
               name="email"
               value={formData.email}
               onChange={handleChange}
+              autoComplete="on"
             />
+            {errors && (
+                <Typography
+                  variant="overline"
+                  gutterBottom
+                  sx={{ display: "block", color: "red" }}
+                >
+                  {errors.email}
+                </Typography>
+              )}
 
             <Typography sx={{ mb: 1, fontWeight: 500 }}>Password</Typography>
 
@@ -134,7 +198,20 @@ const EmployeeLogin = () => {
               fullWidth
               type="password"
               placeholder="Enter your password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              autoComplete="on"
             />
+            {errors && (
+                <Typography
+                  variant="overline"
+                  gutterBottom
+                  sx={{ display: "block", color: "red" }}
+                >
+                  {errors.password}
+                </Typography>
+              )}
 
             {/* <Box
             sx={{

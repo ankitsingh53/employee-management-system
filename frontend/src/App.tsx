@@ -5,12 +5,14 @@ import EmployeeRegister from "./components/employee/EmployeeRegister";
 import Home from "./components/Home";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import DashboardLayout from "./components/DashboardLayout";
-import ProtectedRoute from "./components/ProtectedRoute";
 import Employees from "./components/admin/Employees";
 import Departments from "./components/admin/Departments";
 import Leave from "./components/admin/Leave";
 import AddEmployee from "./components/admin/AddEmployee";
 import AddDepartment from "./components/admin/AddDepartment";
+import EmployeeDashboard from "./components/employee/EmployeeDashboard";
+import EmployeeRoute from "./components/EmployeeRoute";
+import AdminRoute from "./components/AdminRoute";
 
 const App = () => {
   return (
@@ -18,22 +20,32 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/employee/register" element={<EmployeeRegister />} />
-        <Route path="/employee/login" element={<EmployeeLogin />} />
+        <Route path="/user/register" element={<EmployeeRegister />} />
+        <Route path="/user/login" element={<EmployeeLogin />} />
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
+            <AdminRoute>
               <DashboardLayout />
-            </ProtectedRoute>
+            </AdminRoute>
           }
         >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="employees" element={<Employees />} />
           <Route path="departments" element={<Departments />} />
           <Route path="leave" element={<Leave />} />
-          <Route path="/admin/add-employee" element={<AddEmployee />} />
-          <Route path="/admin/add-department" element={<AddDepartment />} />
+          <Route path="add-employee" element={<AddEmployee />} />
+          <Route path="add-department" element={<AddDepartment />} />
+        </Route>
+        <Route
+          path="/user"
+          element={
+            <EmployeeRoute>
+              <DashboardLayout />
+            </EmployeeRoute>
+          }
+        >
+          <Route path="dashboard" element={<EmployeeDashboard />} />
         </Route>
       </Routes>
     </>

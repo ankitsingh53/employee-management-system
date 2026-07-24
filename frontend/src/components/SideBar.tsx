@@ -12,8 +12,12 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import EventNoteIcon from "@mui/icons-material/EventNote";
+import PersonIcon from "@mui/icons-material/Person";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import { useSelector } from "react-redux";
+import type { RootState } from "../glolbalStore/store";
 
-const menuItems = [
+const adminMenu = [
   {
     text: "Dashboard",
     icon: <DashboardIcon />,
@@ -36,7 +40,35 @@ const menuItems = [
   },
 ];
 
+const employeeMenu = [
+  {
+    text: "Dashboard",
+    icon: <DashboardIcon />,
+    path: "/user/dashboard",
+  },
+  {
+    text: "My Profile",
+    icon: <PersonIcon />,
+    path: "/user/profile",
+  },
+  {
+    text: "My Leave",
+    icon: <EventAvailableIcon />,
+    path: "/user/leave",
+  },
+];
+
+
 const SideBar = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+
+const menuItems =
+  user?.role === "ADMIN"
+    ? adminMenu
+    : user?.role === "EMPLOYEE"
+    ? employeeMenu
+    : [];
+    
   return (
     <Box
       sx={{

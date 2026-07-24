@@ -27,9 +27,13 @@ export const ADD_EMPLOYEE = gql`
     designation,
     salary,
     joiningDate,
+    department {
+      id
+      department
+     }
     }
   }
-`
+`;
 
 export const ADD_DEPART = gql`
   mutation AddDepartment($input: CreateDepartment!){

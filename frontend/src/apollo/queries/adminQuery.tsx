@@ -23,6 +23,10 @@ export const GET_EMPLOYEE = gql`
     designation
     salary
     joiningDate
+    department{
+      department
+      id
+    }
     }
   }
 `;

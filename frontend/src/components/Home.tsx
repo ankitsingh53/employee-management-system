@@ -73,7 +73,7 @@ const Home = () => {
 
           <Paper
             elevation={2}
-            onClick={() => navigate("/employee/register")}
+            onClick={() => navigate("/user/register")}
             sx={{
               p: 2,
               display: "flex",

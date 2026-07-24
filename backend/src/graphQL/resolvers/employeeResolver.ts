@@ -19,6 +19,7 @@ export const employeeResolver = {
     Mutation: {
         createEmployee: (parent:any, args:any, context:any)=>{
             const data = args.input;
+            console.log(args)
             const stringPattern = /^[A-Za-z\s'-]+$/;
             if(!data.firstName.trim()){
                 throw new Error("First name is required!")

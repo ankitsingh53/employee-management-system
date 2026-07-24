@@ -12,33 +12,59 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useMutation } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { ADD_EMPLOYEE } from "../../apollo/mutations/adminMutation";
+import { GET_DEPARTMENT } from "../../apollo/queries/adminQuery";
 // import type { SelectChangeEvent } from "@mui/material";
+
+interface GetFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  departmentId: string;
+  designation: string;
+  salary: string;
+  joiningDate: string;
+}
+interface FormErrors {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phoneNumber?: string;
+  departmentId?: string;
+  designation?: string;
+  salary?: string;
+  joiningDate?: string;
+}
+interface DepartmentData {
+  viewDepartment: []
+}
 
 const AddEmployee = () => {
   const navigate = useNavigate();
-  const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState({
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [formData, setFormData] = useState<GetFormData>({
     firstName: "",
     lastName: "",
     email: "",
     phoneNumber: "",
-    // department: "",
+    departmentId: "",
     designation: "",
     salary: "",
     joiningDate: "",
   });
 
   const [addEmployee] = useMutation(ADD_EMPLOYEE);
+  const { data } = useQuery<DepartmentData>(GET_DEPARTMENT);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>):void => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" })
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const customeValidate = () => {
-    const formErrors: FormErrors = {};
+    const formErrors:FormErrors = {};
     let isValid = true;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
     const stringPattern = /^[A-Za-z\s'-]+$/;
@@ -114,17 +140,21 @@ const AddEmployee = () => {
             designation: formData.designation,
             salary: parseFloat(formData.salary),
             joiningDate: formData.joiningDate,
+            departmentId: Number(formData.departmentId),
           },
         },
       });
 
-      console.log(employeeData);
+      // console.log(employeeData);
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);
       }
     }
+
   };
+
+  // console.log(formData);
 
   return (
     <Box>
@@ -158,29 +188,41 @@ const AddEmployee = () => {
               mb: 3,
             }}
           >
-            <Stack sx={{flexGrow: '1'}}>
-            <TextField
-              label="First Name"
-              fullWidth
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-            />
-            {errors && <Typography  variant="overline" gutterBottom sx={{ display: 'block', color: 'red' }}>
-        {errors.firstName}
-      </Typography>}
+            <Stack sx={{ flexGrow: "1" }}>
+              <TextField
+                label="First Name"
+                fullWidth
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+              {errors && (
+                <Typography
+                  variant="overline"
+                  gutterBottom
+                  sx={{ display: "block", color: "red" }}
+                >
+                  {errors.firstName}
+                </Typography>
+              )}
             </Stack>
-            <Stack sx={{flexGrow: '1'}}>
-            <TextField
-              label="Last Name"
-              fullWidth
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-            />
-            {errors && <Typography  variant="overline" gutterBottom sx={{ display: 'block', color: 'red' }}>
-        {errors.lastName}
-      </Typography>}
+            <Stack sx={{ flexGrow: "1" }}>
+              <TextField
+                label="Last Name"
+                fullWidth
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+              />
+              {errors && (
+                <Typography
+                  variant="overline"
+                  gutterBottom
+                  sx={{ display: "block", color: "red" }}
+                >
+                  {errors.lastName}
+                </Typography>
+              )}
             </Stack>
           </Box>
 
@@ -192,9 +234,15 @@ const AddEmployee = () => {
             value={formData.email}
             onChange={handleChange}
           />
-          {errors && <Typography  variant="overline" gutterBottom sx={{ display: 'block', color: 'red' }}>
-        {errors.email}
-      </Typography>}
+          {errors && (
+            <Typography
+              variant="overline"
+              gutterBottom
+              sx={{ display: "block", color: "red" }}
+            >
+              {errors.email}
+            </Typography>
+          )}
           <TextField
             label="Phone Number"
             fullWidth
@@ -203,9 +251,15 @@ const AddEmployee = () => {
             value={formData.phoneNumber}
             onChange={handleChange}
           />
-          {errors && <Typography  variant="overline" gutterBottom sx={{ display: 'block', color: 'red' }}>
-        {errors.phoneNumber}
-      </Typography>}
+          {errors && (
+            <Typography
+              variant="overline"
+              gutterBottom
+              sx={{ display: "block", color: "red" }}
+            >
+              {errors.phoneNumber}
+            </Typography>
+          )}
 
           <Box
             sx={{
@@ -214,22 +268,26 @@ const AddEmployee = () => {
               mb: 3,
             }}
           >
-            {/* <FormControl fullWidth>
+            <FormControl fullWidth>
               <InputLabel>Department</InputLabel>
 
               <Select
                 label="Department"
                 defaultValue=""
-                name="department"
-                value={formData.department}
+                name="departmentId"
+                value={formData.departmentId}
                 onChange={handleChange}
               >
                 <MenuItem value="">Select</MenuItem>
-                <MenuItem value="IT">IT</MenuItem>
-                <MenuItem value="HR">HR</MenuItem>
-                <MenuItem value="Finance">Finance</MenuItem>
+                {data?.viewDepartment.map((dept:{id:string, department:string}) => {
+                  return (
+                    <MenuItem value={dept.id}>
+                      {dept.department}
+                    </MenuItem>
+                  );
+                })}
               </Select>
-            </FormControl> */}
+            </FormControl>
 
             <TextField
               label="Designation"
@@ -238,9 +296,15 @@ const AddEmployee = () => {
               value={formData.designation}
               onChange={handleChange}
             />
-            {errors && <Typography  variant="overline" gutterBottom sx={{ display: 'block', color: 'red' }}>
-        {errors.designation}
-      </Typography>}
+            {errors && (
+              <Typography
+                variant="overline"
+                gutterBottom
+                sx={{ display: "block", color: "red" }}
+              >
+                {errors.designation}
+              </Typography>
+            )}
           </Box>
           <Box
             sx={{
@@ -249,34 +313,45 @@ const AddEmployee = () => {
               mb: 3,
             }}
           >
-            <Stack sx={{flexGrow:'1'}}>
-            <TextField
-              label="Salary"
-              type="number"
-              fullWidth
-              name="salary"
-              value={formData.salary}
-              onChange={handleChange}
-            />
-            {errors && <Typography  variant="overline" gutterBottom sx={{ display: 'block', color: 'red' }}>
-        {errors.salary}
-      </Typography>}
-            </Stack> 
-
-            <Stack sx={{flexGrow:'1'}}>
-            <TextField
-              type="date"
-              fullWidth
-              slotProps={{ inputLabel: { shrink: true } }}
-              name="joiningDate"
-              value={formData.joiningDate}
-              onChange={handleChange}
-            />
-            {errors && <Typography  variant="overline" gutterBottom sx={{ display: 'block', color: 'red' }}>
-        {errors.joiningDate}
-      </Typography>}
+            <Stack sx={{ flexGrow: "1" }}>
+              <TextField
+                label="Salary"
+                type="number"
+                fullWidth
+                name="salary"
+                value={formData.salary}
+                onChange={handleChange}
+              />
+              {errors && (
+                <Typography
+                  variant="overline"
+                  gutterBottom
+                  sx={{ display: "block", color: "red" }}
+                >
+                  {errors.salary}
+                </Typography>
+              )}
             </Stack>
 
+            <Stack sx={{ flexGrow: "1" }}>
+              <TextField
+                type="date"
+                fullWidth
+                slotProps={{ inputLabel: { shrink: true } }}
+                name="joiningDate"
+                value={formData.joiningDate}
+                onChange={handleChange}
+              />
+              {errors && (
+                <Typography
+                  variant="overline"
+                  gutterBottom
+                  sx={{ display: "block", color: "red" }}
+                >
+                  {errors.joiningDate}
+                </Typography>
+              )}
+            </Stack>
           </Box>
           <Box
             sx={{
@@ -303,3 +378,9 @@ const AddEmployee = () => {
 };
 
 export default AddEmployee;
+
+
+
+
+
+
