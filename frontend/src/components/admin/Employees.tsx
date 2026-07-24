@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import {
   Box,
   Typography,
@@ -17,11 +17,26 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { GET_EMPLOYEE } from "../../apollo/queries/adminQuery";
+import { DELETE_EMP } from "../../apollo/mutations/adminMutation";
 
 const Employees = () => {
     const navigate = useNavigate();
     const {data, loading, error} = useQuery(GET_EMPLOYEE);
-    console.log(data)
+    const[deleteEmployee] = useMutation(DELETE_EMP);
+    // console.log(data)
+    const handleDelete = async (id:number)=>{
+      try {
+        await deleteEmployee({
+          variables:{
+            id,
+          },
+          refetchQueries: [{ query: GET_EMPLOYEE }],
+          awaitRefetchQueries: true,
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
   return (
     <Box sx={{width: '100%'}}>
 
@@ -151,9 +166,9 @@ const Employees = () => {
                 Email
               </TableCell>
 
-              {/* <TableCell sx={{ fontWeight: "bold" }}>
+              <TableCell sx={{ fontWeight: "bold" }}>
                 Department
-              </TableCell> */}
+              </TableCell>
 
               <TableCell sx={{ fontWeight: "bold" }}>
                 Phone Number
@@ -204,6 +219,10 @@ const Employees = () => {
                 </TableCell>
 
                 <TableCell>
+                  {employee?.department[0] ? employee?.department[0].department : "Not assigned"}
+                </TableCell>
+
+                <TableCell>
                   {employee.phoneNumber}
                 </TableCell>
 
@@ -224,6 +243,7 @@ const Employees = () => {
                   <Button
                     variant="outlined"
                     size="small"
+                    onClick={()=>navigate(`/admin/edit-employee/${employee.id}`)}
                   >
                     Edit
                   </Button>
@@ -231,6 +251,7 @@ const Employees = () => {
                   <Button
                     color="error"
                     size="small"
+                    onClick={()=>handleDelete(employee.id)}
                   >
                     Delete
                   </Button>

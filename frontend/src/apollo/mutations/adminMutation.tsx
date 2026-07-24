@@ -35,6 +35,33 @@ export const ADD_EMPLOYEE = gql`
   }
 `;
 
+export const UPDATE_EMP = gql`
+  mutation UpdateEmployee($input:UpdateEmployee!){
+    updateEmployee(input: $input){
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    designation,
+    salary,
+    joiningDate,
+    department {
+      id
+      department
+     }
+    }
+  }
+`;
+
+export const DELETE_EMP = gql`
+  mutation DeleteEmployee($id: ID!){
+   deleteEmployee(id: $id){
+     message
+   }
+  }
+`
+
+
 export const ADD_DEPART = gql`
   mutation AddDepartment($input: CreateDepartment!){
     addDepartment(input: $input){

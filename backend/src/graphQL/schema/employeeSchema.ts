@@ -10,7 +10,8 @@ export const employeeSchema = `#graphql
     salary: Float!
     joiningDate: String!
     isActive: Boolean!
-    department: [Department]
+    role: String!
+    department: [Department!]!
   }
 
   type Department {
@@ -35,17 +36,19 @@ export const employeeSchema = `#graphql
     designation: String!
     salary: Float!
     joiningDate: String!
-    departmentId: Int
+    departmentId: Int!
   }
 
   input UpdateEmployee {
     id: ID!
     firstName: String!
     lastName: String!
+    email: String!
     phoneNumber: String!
     designation: String!
     salary: Float!
     joiningDate: String!
+    departmentId: Int
   }
 
   type Mutation {
@@ -53,5 +56,4 @@ export const employeeSchema = `#graphql
    updateEmployee(input:UpdateEmployee!): Employee!
    deleteEmployee(id: ID!): DeleteResponse
  }
-
 `;

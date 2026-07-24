@@ -17,6 +17,7 @@ export const resolvers = {
     ...adminResolvers.Mutation,
     ...employeeResolver.Mutation,
     ...userResolver.Mutation,
-    ...departmentResolver.Mutation
+    ...departmentResolver.Mutation,
+    ...profileResolver.Mutation
   },
 };

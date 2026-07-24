@@ -21,6 +21,9 @@ export const getAllEmployee = async () => {
 };
 export const employeeByID = async (id: number) => {
   const getEmployeeDetails = await employeeRepo.findOne({
+    relations:{
+      department:true
+    },
     where: {
       role: "EMPLOYEE",
       id,
@@ -71,11 +74,24 @@ export const updateEmployee = async (id: number, updatedData: any) => {
       id,
       role: "EMPLOYEE",
     },
+    relations:{
+      department:true
+    }
   });
   if (!getEmployee) {
     throw new Error("Employee not found");
   }
-  Object.assign(getEmployee, updatedData);
+  const department = await departmentRepo.findOne({
+    where:{
+      id:updatedData.departmentId
+    }
+  })
+  if(!department){
+    throw new Error("Department not found");
+  }
+  const {departmentId, ...employeeData} = updatedData
+  Object.assign(getEmployee, employeeData);
+  getEmployee.department = [department];
   return await employeeRepo.save(getEmployee);
 };
 

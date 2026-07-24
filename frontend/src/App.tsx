@@ -13,6 +13,9 @@ import AddDepartment from "./components/admin/AddDepartment";
 import EmployeeDashboard from "./components/employee/EmployeeDashboard";
 import EmployeeRoute from "./components/EmployeeRoute";
 import AdminRoute from "./components/AdminRoute";
+import EditEmployee from "./components/admin/EditEmployee"
+import EmployeeProfile from "./components/employee/EmployeeProfile"
+import EditProfile from "./components/employee/EditProfile";
 
 const App = () => {
   return (
@@ -36,6 +39,8 @@ const App = () => {
           <Route path="leave" element={<Leave />} />
           <Route path="add-employee" element={<AddEmployee />} />
           <Route path="add-department" element={<AddDepartment />} />
+          <Route path="edit-employee/:id" element={<EditEmployee />} />
+
         </Route>
         <Route
           path="/user"
@@ -46,6 +51,9 @@ const App = () => {
           }
         >
           <Route path="dashboard" element={<EmployeeDashboard />} />
+          <Route path="profile" element={<EmployeeProfile />} />
+          <Route path="edit-profile/:id" element={<EditProfile />} />
+
         </Route>
       </Routes>
     </>

@@ -28,3 +28,15 @@ export const LOGOUT_EMPLOYEE = gql`
   }
 }
 `;
+
+export const UPDATE_PROFILE = gql`
+  mutation UpdateProfile($input: UpdateProfile!){
+    updateProfile(input: $input){
+    id
+    firstName
+    lastName
+    email
+    phoneNumber
+    }
+  }
+`;

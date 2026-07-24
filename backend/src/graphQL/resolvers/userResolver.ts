@@ -83,7 +83,9 @@ export const userResolver = {
         if (getEmployee.password === null) {
           throw new Error("Please register before login...");
         }
-        const isMatch = await comparePassword(password, getEmployee.password);
+
+        const isMatch = comparePassword(password, getEmployee.password);
+        console.log(getEmployee.password)
         if (!isMatch) {
           throw new Error("Invalid email or password");
         }
