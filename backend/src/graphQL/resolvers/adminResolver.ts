@@ -1,14 +1,13 @@
 import { getAdmin } from "../../services/employee/employee.service.js";
 import { authAdmin } from "../../services/admin/adminService.js";
 import { generateToken } from "../../utils/jwt.js";
+import { requireAdmin, requireAuth } from "../../middleware/authorization.js";
 
 export const adminResolvers = {
   Query: {
     getMe: async (parent: any, args: any, context: any) => {
-      if (!context.user) {
-        throw new Error("Unauthorized user");
-      }
-      const adminData = await getAdmin(context.user.id);
+      const user = requireAdmin(context)
+      const adminData = await getAdmin(user.id);
       return adminData;
     },
   },
@@ -19,16 +18,16 @@ export const adminResolvers = {
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
       if (!email.trim()) {
         throw new Error("Email is Required");
+      } else if (!emailRegex.test(email)) {
+        throw new Error("Enter valid email and must include @");
       }
-      else if(!emailRegex.test(email)){
-        throw new Error("Enter valid email and must include @")
-      }
-      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/
-      if(!password.trim()){
-        throw new Error("Password is required")
-      }
-      else if (!passwordRegex.test(password)){
-        throw new Error("Password must be minimum 4 characters, 1 letter & 1 digit")
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
+      if (!password.trim()) {
+        throw new Error("Password is required");
+      } else if (!passwordRegex.test(password)) {
+        throw new Error(
+          "Password must be minimum 4 characters, 1 letter & 1 digit",
+        );
       }
       try {
         const admin = await authAdmin(email);

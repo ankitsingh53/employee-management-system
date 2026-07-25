@@ -7,7 +7,6 @@ const Home = () => {
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      {/* Left Side */}
       <Box
         sx={{
           width: { xs: 0, md: "50%" },
@@ -24,13 +23,10 @@ const Home = () => {
           <br />
           Management System
         </Typography>
-
         <Typography sx={{ mt: 3, color: "#D1D5DB", maxWidth: 450 }}>
           Streamline your workforce operations, track profile, manage your activity, and empower your team securely.
         </Typography>
       </Box>
-
-      {/* Right Side */}
       <Box
         sx={{
           width: { xs: "100%", md: "50%" },

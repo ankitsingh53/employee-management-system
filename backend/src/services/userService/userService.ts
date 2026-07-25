@@ -36,7 +36,12 @@ export const saveEmployee = async (email: string, password: string) => {
 
 export const getMe = async (id: number) => {
   const data = await userRepo.findOne({
-    where: { id },
+    where: { 
+      id
+     },
+     relations:{
+      department:true,
+     }
   });
   return data;
 };

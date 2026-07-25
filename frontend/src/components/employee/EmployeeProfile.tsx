@@ -9,43 +9,13 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../glolbalStore/store";
-import { useQuery } from "@apollo/client/react";
-import { GET_PROFILE } from "../../apollo/queries/employeeQuery";
-
-type DepartmentData = {
-  id: string;
-  department: string;
-}
-interface EmployeeData {
-  viewProfile?: {
-    firstName: string;
-    lastName: string;
-    email:string;
-    phoneNumber:string;
-    department: [DepartmentData];
-    designation: string;
-    joiningDate: string;
-    salary: number;
-  }
-}
 
 const EmployeeProfile = () => {
   const navigate = useNavigate();
 
   const user = useSelector((state: RootState) => state.auth.user);
-  // console.log(user)
+  console.log(user)
 
-  const {data , loading, error} = useQuery<EmployeeData>(GET_PROFILE, {
-    variables: {
-      id: Number(user?.id)
-    }
-  });
-
-  if(loading) return <p>Loading...</p>
-  
-  if(error){
-    console.log(error)
-  }
 
   return (
     <Box>
@@ -75,56 +45,56 @@ const EmployeeProfile = () => {
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography color="text.secondary">First Name</Typography>
               <Typography sx={{fontWeight: '600'}}>
-                {data?.viewProfile?.firstName}
+                {user?.firstName}
               </Typography>
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography color="text.secondary">Last Name</Typography>
               <Typography sx={{fontWeight: '600'}}>
-                {data?.viewProfile?.lastName}
+                {user?.lastName}
               </Typography>
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography color="text.secondary">Email</Typography>
               <Typography sx={{fontWeight: '600'}}>
-                {data?.viewProfile?.email}
+                {user?.email}
               </Typography>
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography color="text.secondary">Phone Number</Typography>
               <Typography sx={{fontWeight: '600'}}>
-                {data?.viewProfile?.phoneNumber || "-"}
+                {user?.phoneNumber || "-"}
               </Typography>
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography color="text.secondary">Department</Typography>
               <Typography sx={{fontWeight: '600'}}>
-                {data?.viewProfile?.department[0].department || "Not Assigned yet"}
+                {user?.department[0].department || "Not Assigned yet"}
               </Typography>
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography color="text.secondary">Designation</Typography>
               <Typography sx={{fontWeight: '600'}}>
-                {data?.viewProfile?.designation || "Not Assigned yet"}
+                {user?.designation || "Not Assigned yet"}
               </Typography>
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography color="text.secondary">Joining Date</Typography>
               <Typography sx={{fontWeight: '600'}}>
-                {data?.viewProfile?.joiningDate}
+                {user?.joiningDate}
               </Typography>
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography color="text.secondary">Salary</Typography>
               <Typography sx={{fontWeight: '600'}}>
-                {data?.viewProfile ? `₹${data?.viewProfile?.salary}` : "-"} 
+                {user ? `₹${user?.salary}` : "-"} 
               </Typography>
             </Grid>
           </Grid>
@@ -140,14 +110,14 @@ const EmployeeProfile = () => {
           >
             <Button
               variant="contained"
-              onClick={() => navigate(`/user/edit-profile/${user?.id}`)}
+              onClick={() => navigate("/user/edit-profile")}
             >
               Edit Profile
             </Button>
 
             <Button
               variant="outlined"
-              onClick={() => navigate("")}
+              onClick={() => navigate("/user/change-password")}
             >
               Change Password
             </Button>

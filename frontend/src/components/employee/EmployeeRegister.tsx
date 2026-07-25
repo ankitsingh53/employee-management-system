@@ -89,11 +89,13 @@ const EmployeeRegister = () => {
     const valid = customeValidate();
     if (!valid) return;
     try {
-      const data = await registerEmployee({
+      const {data} = await registerEmployee({
         variables: {
           input: formData,
         },
       });
+      
+        navigate("/user/login")
     } catch (err) {
       if (err instanceof Error) setResponse(err.message);
     }
@@ -154,7 +156,7 @@ const EmployeeRegister = () => {
             maxWidth: 450,
           }}
         >
-          <BackButton />
+          <BackButton path="/"/>
           <Box
             component="form"
             noValidate

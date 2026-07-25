@@ -1,18 +1,27 @@
 export const userSchema = `#graphql
 type Employee {
- id: ID!
- firstName: String!
- lastName: String!
- email: String!
- role: String!
+    id: ID!
+    firstName: String!
+    lastName: String!
+    email: String!
+    phoneNumber: String!
+    designation: String!
+    salary: Float!
+    joiningDate: String!
+    isActive: Boolean!
+    role: String!
+    department: [Department!]!
 }
+
 type AuthResponse {
   token: String
   message: String
 }
+
 type Query {
 getUser: Employee
 }
+
 input RegisterEmployee {
   firstName: String!
   lastName: String!

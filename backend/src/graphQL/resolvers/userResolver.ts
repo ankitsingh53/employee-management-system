@@ -3,13 +3,12 @@ import { comparePassword, hashPassword } from "../../utils/bcrypt.js";
 import { saveEmployee } from "../../services/userService/userService.js";
 import { generateToken } from "../../utils/jwt.js";
 import { getMe } from "../../services/userService/userService.js";
+import { requireAuth } from "../../middleware/authorization.js";
 export const userResolver = {
   Query: {
     getUser: async (parent: any, args: any, context: any) => {
-      if (!context.user) {
-        throw new Error("Unauthorized user");
-      }
-      const employeeDetails = await getMe(context.user.id);
+      const user = requireAuth(context)
+      const employeeDetails = await getMe(user.id);
       return employeeDetails;
     },
   },
@@ -62,8 +61,9 @@ export const userResolver = {
         }
       }
     },
-    loginEmployee: async (parent: any, args: any, context: any) => {
+    loginEmployee: async (_: any, args: any, context: any) => {
       const { email, password } = args.input;
+      console.log(email, password)
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
       if (!email.trim()) {
         throw new Error("Email is required!");
@@ -80,12 +80,11 @@ export const userResolver = {
       }
       try {
         const getEmployee = await exitingEmployee(email);
-        if (getEmployee.password === null) {
+        if (!getEmployee.isRegistered) {
           throw new Error("Please register before login...");
         }
 
-        const isMatch = comparePassword(password, getEmployee.password);
-        console.log(getEmployee.password)
+        const isMatch = await comparePassword(password, getEmployee.password);
         if (!isMatch) {
           throw new Error("Invalid email or password");
         }

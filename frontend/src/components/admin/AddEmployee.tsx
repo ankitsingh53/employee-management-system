@@ -144,8 +144,9 @@ const AddEmployee = () => {
           },
         },
       });
-
-      // console.log(employeeData);
+      
+        navigate("/admin/employees")
+  
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);

@@ -16,6 +16,9 @@ import AdminRoute from "./components/AdminRoute";
 import EditEmployee from "./components/admin/EditEmployee"
 import EmployeeProfile from "./components/employee/EmployeeProfile"
 import EditProfile from "./components/employee/EditProfile";
+import ChangePassword from "./components/employee/ChangePassword";
+import LeaveManagement from "./components/employee/LeaveManagement";
+import ManageLeave from "./components/admin/ManageLeave";
 
 const App = () => {
   return (
@@ -40,7 +43,7 @@ const App = () => {
           <Route path="add-employee" element={<AddEmployee />} />
           <Route path="add-department" element={<AddDepartment />} />
           <Route path="edit-employee/:id" element={<EditEmployee />} />
-
+          <Route path="leave" element={<ManageLeave/>} />
         </Route>
         <Route
           path="/user"
@@ -52,7 +55,9 @@ const App = () => {
         >
           <Route path="dashboard" element={<EmployeeDashboard />} />
           <Route path="profile" element={<EmployeeProfile />} />
-          <Route path="edit-profile/:id" element={<EditProfile />} />
+          <Route path="edit-profile" element={<EditProfile />} />
+          <Route path="change-password" element={<ChangePassword />} />
+          <Route path="leave" element={<LeaveManagement />} />
 
         </Route>
       </Routes>

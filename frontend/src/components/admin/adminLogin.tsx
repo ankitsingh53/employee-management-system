@@ -103,7 +103,6 @@ display:"flex",
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      {/* Left Side */}
       <Box
         sx={{
           width: { xs: 0, md: "50%" },
@@ -139,8 +138,6 @@ display:"flex",
           management solution.
         </Typography>
       </Box>
-
-      {/* Right Side */}
       <Box
         sx={{
           width: { xs: "100%", md: "50%" },
@@ -158,7 +155,7 @@ display:"flex",
             maxWidth: 420,
           }}
         >
-          <BackButton />
+          <BackButton path = "/"/>
           <Box component="form" noValidate autoComplete="On" onSubmit={handleSubmit}>
             <Typography
               sx={{
@@ -173,7 +170,6 @@ display:"flex",
             <Typography color="text.secondary" sx={{ mb: 3 }}>
               Sign in to manage the organization.
             </Typography>
-            {/* {response && <p style={{color:'red'}}>{response}</p>} */}
             {response && (
                 <Typography
                   variant="overline"
@@ -195,8 +191,6 @@ display:"flex",
               onChange={handleChange}
               autoComplete="on"
             />
-            {/* {errors.email && <p style={{color:'red'}}>{errors.email}</p>}
-             */}
              {errors.email && (
                 <Typography
                   variant="overline"
@@ -218,7 +212,6 @@ display:"flex",
               type="password"
               autoComplete="on"
             />
-            {/* {errors.password && <p style={{color:'red'}}>{errors.password}</p>} */}
             {errors.password && (
                 <Typography
                   variant="overline"

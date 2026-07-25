@@ -1,8 +1,19 @@
+export interface Department {
+  id: number;
+  department: string;
+}
+
 export interface User {
-  id: string;
+  id: number;
   firstName: string;
+  lastName: string;
   email: string;
-  role: 'ADMIN' | 'EMPLOYEE';
+  phoneNumber: string | null;
+  designation: string | null;
+  joiningDate: string | null;
+  salary: number | null;
+  role: "ADMIN" | "EMPLOYEE";
+  department: Department[] | null;
 }
 
 export interface AuthState {

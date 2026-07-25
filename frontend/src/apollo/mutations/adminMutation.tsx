@@ -87,3 +87,11 @@ export const DELETE_DEPARTMENT = gql`
     }
   }
 `;
+
+export const UPDATE_LEAVE_STATUS = gql`
+mutation UpdateLeaveStatus($input: UpdateLeaveStatusInput!) {
+  updateLeaveStatus(input: $input) {
+    message
+  }
+}
+`;

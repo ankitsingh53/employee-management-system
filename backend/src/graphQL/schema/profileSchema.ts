@@ -22,21 +22,19 @@ type Employee {
   }
 
   input UpdateProfile {
-   id: ID!
    firstName: String!
    lastName: String!
    email:String!
    phoneNumber:String!
   }
    input PasswordInput {
-     id: ID!
      currentPassword: String!
      newPassword: String!
    }
 
   type Mutation {
    updateProfile(input: UpdateProfile!): Employee!
-   changePassword(input: PasswordInput!): Response
+   changePassword(input: PasswordInput!): Response!
  }
   
 `

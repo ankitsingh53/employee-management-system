@@ -61,4 +61,26 @@ export const GET_DEPARTMENT = gql`
   }
 `;
 
+export const ALL_LEAVE_REQUESTS = gql`
+query AllLeaveRequests {
+  allLeaveRequests {
+    id
+    leaveType
+    startDate
+    endDate
+    reason
+    status
+    employee {
+      id
+      firstName
+      lastName
+      email
+      department {
+        department
+      }
+    }
+  }
+}
+`;
+
 

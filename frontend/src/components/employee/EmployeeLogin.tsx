@@ -141,7 +141,7 @@ const EmployeeLogin = () => {
             maxWidth: 420,
           }}
         >
-          <BackButton />
+          <BackButton path="/user/register" />
           <Box
             component="form"
             noValidate

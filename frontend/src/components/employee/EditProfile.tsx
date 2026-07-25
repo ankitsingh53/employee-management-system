@@ -8,9 +8,11 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@apollo/client/react";
-import { GET_EMP_BY_ID, GET_EMPLOYEE } from "../../apollo/queries/adminQuery";
+import { useMutation } from "@apollo/client/react";
 import { UPDATE_PROFILE } from "../../apollo/mutations/employeeMutation";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuth } from "../../features/auth/authSlice";
+import type { RootState } from "@reduxjs/toolkit/query";
 
 interface GetFormData {
   firstName: string;
@@ -25,7 +27,7 @@ interface FormErrors {
   phoneNumber?: string;
 }
 const EditProfile = () => {
-    const {id} = useParams();
+    const dispatch = useDispatch();
   const navigate = useNavigate();
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState<GetFormData>({
@@ -35,28 +37,18 @@ const EditProfile = () => {
     phoneNumber: "",
   });
 
+  const user = useSelector((state: RootState)=> state.auth.user);
   const [updateProfile] = useMutation(UPDATE_PROFILE);
-  const {data: empData} = useQuery(GET_EMP_BY_ID, {
-    variables:{
-        id: Number(id)
-    }
-  });
-
-  // console.log(empData)
 
   useEffect(() => {
-  if (empData?.getEmployeeById) {
-    const employee = empData.getEmployeeById;
-    // console.log(employee)
-
+  if (!user) return ;
     setFormData({
-      firstName: employee.firstName,
-      lastName: employee.lastName,
-      email: employee.email,
-      phoneNumber: employee.phoneNumber
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phoneNumber: user.phoneNumber
     });
-  }
-}, [empData]);
+}, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>):void => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -107,21 +99,21 @@ const EditProfile = () => {
     const valid = customeValidate();
     if (!valid) return;
     try {
-       await updateProfile({
+      const {data} = await updateProfile({
         variables: {
           input: {
-            id:id,
             firstName: formData.firstName,
             lastName: formData.lastName,
             email: formData.email,
             phoneNumber: formData.phoneNumber,
           },
         },
-        refetchQueries: [{ query: GET_EMPLOYEE }],
-        awaitRefetchQueries: true,
       });
-      
-      // navigate("/user/profile")
+      console.log(data.updateProfile)
+      if(data.updateProfile){
+      dispatch(setAuth(data.updateProfile));
+      }
+      navigate("/user/profile")
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);
@@ -129,8 +121,6 @@ const EditProfile = () => {
     }
 
   };
-
-  // console.log(formData)
   
   return (
     <Box>
@@ -204,6 +194,7 @@ const EditProfile = () => {
 
           <TextField
             label="Email"
+            disabled
             fullWidth
             sx={{ mb: 3 }}
             name="email"

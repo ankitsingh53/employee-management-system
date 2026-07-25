@@ -1,21 +1,24 @@
-import { getProfile, changePassword } from "../../services/profileService.js";
+import { isContext } from "node:vm";
+import { requireAuth } from "../../middleware/authorization.js";
+import { getProfile, changePassword, updateProfile } from "../../services/profileService.js";
 import { comparePassword, hashPassword } from "../../utils/bcrypt.js";
 export const profileResolver = {
   Query: {
-    viewProfile: async (parent: any, args: any) => {
+    viewProfile: async (_:any, args: any, context:any) => {
+      requireAuth(context);
       const id = args.id;
-      console.log(id);
       return await getProfile(id);
     },
   },
 
   Mutation: {
-    updateProfile: async (parent: any, args: any) => {
-      console.log(args);
-      const { id, ...updateData } = args.input;
-      console.log(id, updateData);
+    updateProfile: async (parent: any, args: any, context:any) => {
+      const user = requireAuth(context);
+      return await updateProfile(user.id, args.input)
     },
-    changePassword: async (parent: any, args: any) => {
+
+    changePassword: async (parent: any, args: any, context:any) => {
+      requireAuth(context)
       const data = args.input;
       const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
       if (!data.currentPassword.trim()) {
@@ -32,8 +35,7 @@ export const profileResolver = {
           "Password must be minimum 4 characters, one letter & one digit",
         );
       }
-      // console.log(data.id, data.currentPassword, data.newPassword)
-      return await changePassword(data);      
+      return await changePassword(context.user.id, data);      
     },
   },
 };
