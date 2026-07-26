@@ -51,7 +51,7 @@ export class Employee {
     type: "boolean",
     default: true,
   })
-  isActive!: boolean;
+  status!: boolean;
 
   @ManyToMany(() => Department, (department) => department.employees)
   @JoinTable()

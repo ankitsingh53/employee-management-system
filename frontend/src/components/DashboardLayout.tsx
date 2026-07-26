@@ -3,8 +3,15 @@ import { Outlet } from "react-router-dom";
 
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
+import { useSelector } from "react-redux";
+import type { RootState } from "../glolbalStore/store";
+import Loader from "./Loader";
 
 const DashboardLayout = () => {
+  const user = useSelector((state: RootState)=>state.auth)
+  if(user.loading){
+    return <Loader/>
+  }
   return (
     <>
       <NavBar />

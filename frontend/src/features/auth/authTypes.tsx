@@ -13,6 +13,7 @@ export interface User {
   joiningDate: string | null;
   salary: number | null;
   role: "ADMIN" | "EMPLOYEE";
+  status: string;
   department: Department[] | null;
 }
 

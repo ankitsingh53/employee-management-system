@@ -35,6 +35,7 @@ type LeaveResponse {
   updateLeaveStatus(
     input: UpdateLeaveStatusInput!
   ): LeaveResponse!
+  cancelLeave(id: ID!): LeaveResponse!
 }
 
 `;

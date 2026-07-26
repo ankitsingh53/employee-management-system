@@ -1,4 +1,13 @@
-import { Box, Button, Link, Paper, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  Link,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import BackButton from "../BackButton";
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
@@ -8,97 +17,100 @@ import { useApolloClient } from "@apollo/client/react";
 import { useDispatch } from "react-redux";
 import { setAuth } from "../../features/auth/authSlice";
 import { GET_ADMIN } from "../../apollo/queries/adminQuery";
+import { toast } from "react-toastify";
+import Loader from "../Loader";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 type FormData = {
   email: string;
   password: string;
 };
 interface FormErrors {
-  email?:string,
-  password?:string
+  email?: string;
+  password?: string;
+}
+interface LoginAdminResponse {
+  loginAdmin: {
+    message: string;
+  };
+}
+interface LoginAdminVariables {
+  input: FormData;
 }
 
 const AdminLogin = () => {
   const navigate = useNavigate();
   const client = useApolloClient();
   const dispatch = useDispatch();
-  const[response, setResponse] = useState("")
+  const [showCurrent, setShowCurrent] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [loginAdmin, {loading}] = useMutation(LOGIN_ADMIN);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [loginAdmin, { loading }] = useMutation<LoginAdminResponse, LoginAdminVariables>(LOGIN_ADMIN);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({...errors, [e.target.name]:""})
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  const customeValidate = ()=>{
+  const customeValidate = () => {
     const formErrors: FormErrors = {};
     let isValid = true;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
 
-      if (!formData.email.trim()) {
-        formErrors.email = "Email is mandatory";
-        isValid = false;
-      }
-      else if(!emailRegex.test(formData.email)){
-        formErrors.email = "Enter valid email address and must include @";
-        isValid = false;
-      }
-      if(!formData.password.trim()){
-        formErrors.password= "Password is mandatory";
-        isValid = false;
-      }
-      else if (!passwordRegex.test(formData.password)){
-        formErrors.password = "Password must be minimum 4 characters, one letter & one digit";
-        isValid = false;
-      }
-      setErrors(formErrors);
-      return isValid;
-    };
-  
-  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>)=>{
+    if (!formData.email.trim()) {
+      formErrors.email = "Email is mandatory";
+      isValid = false;
+    } else if (!emailRegex.test(formData.email)) {
+      formErrors.email = "Enter valid email address and must include @";
+      isValid = false;
+    }
+    if (!formData.password.trim()) {
+      formErrors.password = "Password is mandatory";
+      isValid = false;
+    } else if (!passwordRegex.test(formData.password)) {
+      formErrors.password =
+        "Password must be minimum 4 characters, one letter & one digit";
+      isValid = false;
+    }
+    setErrors(formErrors);
+    return isValid;
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let valid = customeValidate();
-    if(!valid) return;
+    if (!valid) return;
     try {
-      const {data} = await loginAdmin({
+      const { data } = await loginAdmin({
         variables: {
-          input: formData
-        }
-      })
-      if(data?.loginAdmin?.message){
+          input: formData,
+        },
+      });
+      if (data?.loginAdmin?.message) {
         const adminData = await client.query({
           query: GET_ADMIN,
           fetchPolicy: "network-only",
-        })
-        dispatch(setAuth(adminData.data.getMe))
-       
+        });
+        dispatch(setAuth(adminData.data.getMe));
+        navigate("/admin/dashboard");
+        toast.success("Login Successfully", {
+          autoClose: 2000,
+        });
       }
-       navigate("/admin/dashboard");
     } catch (err) {
-      if(err instanceof Error){
-        setResponse(err.message)
-      }else {
-        console.log(err)
+      if (err instanceof Error) {
+        toast.error(err.message, {
+          autoClose: 2000,
+        });
       }
     }
-  }
+  };
 
-  if(loading){
-    return <Box
-    sx={{
-display:"flex",
-    justifyContent:"center",
-    alignItems:"center",
-    height:"100vh"
-    }}
->
-    Loading...
-</Box>
+  if (loading) {
+    return <Loader />;
   }
 
   return (
@@ -155,8 +167,13 @@ display:"flex",
             maxWidth: 420,
           }}
         >
-          <BackButton path = "/"/>
-          <Box component="form" noValidate autoComplete="On" onSubmit={handleSubmit}>
+          <BackButton path="/" />
+          <Box
+            component="form"
+            noValidate
+            autoComplete="On"
+            onSubmit={handleSubmit}
+          >
             <Typography
               sx={{
                 fontSize: "34px",
@@ -170,15 +187,7 @@ display:"flex",
             <Typography color="text.secondary" sx={{ mb: 3 }}>
               Sign in to manage the organization.
             </Typography>
-            {response && (
-                <Typography
-                  variant="overline"
-                  gutterBottom
-                  sx={{ display: "block", color: "red" }}
-                >
-                  {response}
-                </Typography>
-              )}
+
             <Typography sx={{ mb: 1, fontWeight: 500 }}>Email</Typography>
 
             <TextField
@@ -191,15 +200,15 @@ display:"flex",
               onChange={handleChange}
               autoComplete="on"
             />
-             {errors.email && (
-                <Typography
-                  variant="overline"
-                  gutterBottom
-                  sx={{ display: "block", color: "red" }}
-                >
-                  {errors.email}
-                </Typography>
-              )}
+            {errors.email && (
+              <Typography
+                variant="overline"
+                gutterBottom
+                sx={{ display: "block", color: "red" }}
+              >
+                {errors.email}
+              </Typography>
+            )}
 
             <Typography sx={{ mb: 1, fontWeight: 500 }}>Password</Typography>
 
@@ -209,18 +218,32 @@ display:"flex",
               name="password"
               value={formData.password}
               onChange={handleChange}
-              type="password"
+              type={showCurrent ? "text" : "password"}
               autoComplete="on"
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowCurrent(!showCurrent)}
+                        edge="end"
+                      >
+                        {showCurrent ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
             />
             {errors.password && (
-                <Typography
-                  variant="overline"
-                  gutterBottom
-                  sx={{ display: "block", color: "red" }}
-                >
-                  {errors.password}
-                </Typography>
-              )}
+              <Typography
+                variant="overline"
+                gutterBottom
+                sx={{ display: "block", color: "red" }}
+              >
+                {errors.password}
+              </Typography>
+            )}
 
             {/* <Box
             sx={{
@@ -257,9 +280,8 @@ display:"flex",
               }}
               disabled={loading}
             >
-             {loading ? "Signing In..." : "Sign In"}
+              {loading ? "Signing In..." : "Sign In"}
             </Button>
-            
           </Box>
 
           <Typography

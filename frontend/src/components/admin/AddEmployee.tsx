@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { ADD_EMPLOYEE } from "../../apollo/mutations/adminMutation";
 import { GET_DEPARTMENT } from "../../apollo/queries/adminQuery";
+import { toast } from "react-toastify";
 // import type { SelectChangeEvent } from "@mui/material";
 
 interface GetFormData {
@@ -146,7 +147,7 @@ const AddEmployee = () => {
       });
       
         navigate("/admin/employees")
-  
+        toast.success("Added Successfully")
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);

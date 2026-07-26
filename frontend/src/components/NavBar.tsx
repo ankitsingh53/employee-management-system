@@ -11,10 +11,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../glolbalStore/store";
 import { useApolloClient, useMutation } from "@apollo/client/react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LOGOUT_ADMIN } from "../apollo/mutations/adminMutation";
 import { logout } from "../features/auth/authSlice";
 import { LOGOUT_EMPLOYEE } from "../apollo/mutations/employeeMutation";
+import { toast } from "react-toastify";
 
 const NavBar = () => {
   const dispatch = useDispatch();
@@ -47,6 +48,9 @@ const NavBar = () => {
         await client.clearStore();
         handleClose();
         navigate("/admin/login");
+        toast.success("Logout Successfully",{
+          "autoClose":2000,
+        })
       }
     } else if (user?.role === "EMPLOYEE") {
       const { data } = await logoutEmployee();
@@ -56,6 +60,9 @@ const NavBar = () => {
         await client.clearStore();
         handleClose();
         navigate("/user/login");
+        toast.success("Logout Successfully",{
+          "autoClose":2000,
+        })
       }
     }
   } catch (error) {
@@ -77,8 +84,18 @@ const NavBar = () => {
           padding: "15px",
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: "500", letterSpacing: 0.5 }}>
-          Employee Management System
+        <Typography 
+        variant="h6" 
+        sx={{ fontWeight: "500", letterSpacing: 0.5 }}
+        >
+          <Link 
+          style={{
+            color:'white',
+            textDecoration: 'none'
+          }}
+          to={user?.role ==="ADMIN" ? "/admin/dashboard" : "/user/dashboard"}
+          >Employee Management System</Link>
+          
         </Typography>
 
         <Box

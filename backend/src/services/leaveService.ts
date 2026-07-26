@@ -38,7 +38,6 @@ export const myLeaves = async (userId: number) => {
         id: userId,
       },
     },
-
     order: {
       createdAt: "DESC",
     },
@@ -48,15 +47,22 @@ export const myLeaves = async (userId: number) => {
 // ------Admin--------------
 
 export const allLeaveRequests = async () => {
-  return await leaveRepo.find({
+  console.log("service");
+  const data =  await leaveRepo.find({
     relations: {
-      employee: true,
+      employee: {
+        department:true,
+      }
     },
 
     order: {
       createdAt: "DESC",
     },
   });
+  if(!data){
+    throw new Error("No leave request found")
+  }
+  return data
 };
 
 export const updateLeaveStatus = async (data: any) => {
@@ -78,3 +84,25 @@ export const updateLeaveStatus = async (data: any) => {
     message: "Leave status updated successfully.",
   };
 };
+
+
+export const cancelLeave = async(id:number)=>{
+const leave = await leaveRepo.findOne({
+  where: { id },
+});
+
+console.log(leave)
+if (!leave) {
+  throw new Error("Leave not found");
+}
+
+if (leave.status !== "PENDING") {
+  throw new Error("Only pending leave can be cancelled.");
+}
+
+await leaveRepo.remove(leave);
+
+return {
+  message: "Leave cancelled successfully.",
+};
+}

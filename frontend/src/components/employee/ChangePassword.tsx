@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CHANGE_PASSWORD } from "../../apollo/mutations/employeeMutation";
 import { useMutation } from "@apollo/client/react";
+import { toast } from "react-toastify";
 const ChangePassword = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -104,6 +105,7 @@ const ChangePassword = () => {
       console.log(data);
 
       navigate("/user/profile");
+      toast.success("Password changed successfully")
     } catch (error) {
       console.log(error);
     }

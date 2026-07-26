@@ -13,6 +13,7 @@ import { UPDATE_PROFILE } from "../../apollo/mutations/employeeMutation";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "../../features/auth/authSlice";
 import type { RootState } from "@reduxjs/toolkit/query";
+import { toast } from "react-toastify";
 
 interface GetFormData {
   firstName: string;
@@ -114,6 +115,9 @@ const EditProfile = () => {
       dispatch(setAuth(data.updateProfile));
       }
       navigate("/user/profile")
+      toast.success("Updated Successfully",{
+        "autoClose": 2000,
+      })
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);

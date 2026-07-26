@@ -1,4 +1,13 @@
-import { Box, Button, Link, Paper, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  Link,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import BackButton from "../BackButton";
 import React, { useState } from "react";
@@ -7,22 +16,25 @@ import { LOGIN_EMPLOYEE } from "../../apollo/mutations/employeeMutation";
 import { useDispatch } from "react-redux";
 import { GET_USER } from "../../apollo/queries/employeeQuery";
 import { setAuth } from "../../features/auth/authSlice";
+import { toast } from "react-toastify";
+import Loader from "../Loader";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 interface FormData {
   email: string;
-  password: string ;
+  password: string;
 }
 interface FormError {
   email?: string;
-  password?: string ;
+  password?: string;
 }
 
 const EmployeeLogin = () => {
   const navigate = useNavigate();
   const client = useApolloClient();
   const dispatch = useDispatch();
-  const [loginEmployee] = useMutation(LOGIN_EMPLOYEE);
-  const [response, setResponse] = useState<String>("");
+  const [loginEmployee, { loading }] = useMutation(LOGIN_EMPLOYEE);
+  const [showCurrent, setShowCurrent] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
@@ -30,11 +42,11 @@ const EmployeeLogin = () => {
   const [errors, setErrors] = useState<FormError>({});
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({...errors, [e.target.name]:""})
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const customeValidate = () => {
-    const formErrors:FormError = {};
+    const formErrors: FormError = {};
     let isValid = true;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
@@ -60,31 +72,34 @@ const EmployeeLogin = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const valid = customeValidate();
-    if(!valid) return;
+    if (!valid) return;
     try {
-      const {data} = await loginEmployee({
+      const { data } = await loginEmployee({
         variables: {
           input: formData,
         },
       });
       if (data?.loginEmployee?.message) {
-      const userData = await client.query({
-        query: GET_USER,
-        fetchPolicy: "network-only",
-      });
-
-      dispatch(setAuth(userData.data.getUser));
-
-      navigate("/user/dashboard");
-    }
+        const userData = await client.query({
+          query: GET_USER,
+          fetchPolicy: "network-only",
+        });
+        dispatch(setAuth(userData.data.getUser));
+        navigate("/user/dashboard");
+        toast.success("Login Successfully", {
+          autoClose: 2000,
+        });
+      }
     } catch (error) {
       if (error instanceof Error) {
-        setResponse(error.message);
-      } else {
-        console.log(error);
+        toast.error(`${error.message}`, {
+          autoClose: 2000,
+        });
       }
     }
   };
+
+  if (loading) return <Loader />;
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -142,12 +157,7 @@ const EmployeeLogin = () => {
           }}
         >
           <BackButton path="/user/register" />
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            
-          >
+          <Box component="form" noValidate onSubmit={handleSubmit}>
             <Typography
               sx={{
                 fontSize: "34px",
@@ -162,15 +172,6 @@ const EmployeeLogin = () => {
               Sign in to access your account.
             </Typography>
 
-            {response && (
-                <Typography
-                  variant="overline"
-                  gutterBottom
-                  sx={{ display: "block", color: "red" }}
-                >
-                  {response}
-                </Typography>
-                 )}
             <Typography sx={{ mb: 1, fontWeight: 500 }}>Email</Typography>
 
             <TextField
@@ -183,35 +184,49 @@ const EmployeeLogin = () => {
               autoComplete="on"
             />
             {errors && (
-                <Typography
-                  variant="overline"
-                  gutterBottom
-                  sx={{ display: "block", color: "red" }}
-                >
-                  {errors.email}
-                </Typography>
-              )}
+              <Typography
+                variant="overline"
+                gutterBottom
+                sx={{ display: "block", color: "red" }}
+              >
+                {errors.email}
+              </Typography>
+            )}
 
             <Typography sx={{ mb: 1, fontWeight: 500 }}>Password</Typography>
 
             <TextField
               fullWidth
-              type="password"
+              type={showCurrent ? "text" : "password"}
               placeholder="Enter your password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               autoComplete="on"
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowCurrent(!showCurrent)}
+                        edge="end"
+                      >
+                        {showCurrent ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
             />
             {errors && (
-                <Typography
-                  variant="overline"
-                  gutterBottom
-                  sx={{ display: "block", color: "red" }}
-                >
-                  {errors.password}
-                </Typography>
-              )}
+              <Typography
+                variant="overline"
+                gutterBottom
+                sx={{ display: "block", color: "red" }}
+              >
+                {errors.password}
+              </Typography>
+            )}
 
             {/* <Box
             sx={{

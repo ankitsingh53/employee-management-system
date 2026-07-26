@@ -105,8 +105,15 @@ export const deleteEmployee = async (id: number) => {
   if (!getEmployee) {
     throw new Error("Employee not found");
   }
-  await employeeRepo.remove(getEmployee);
+
+  getEmployee.status = getEmployee.status===true ? false : true; 
+  console.log(getEmployee)
+  await employeeRepo.save(getEmployee);
   return {
-    message: "Employee deleted successfully",
+    message: `Employee ${
+      getEmployee.status === true
+        ? "activated"
+        : "deactivated"
+    } successfully.`
   };
 };

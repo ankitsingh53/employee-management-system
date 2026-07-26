@@ -64,3 +64,11 @@ mutation ApplyLeave($input: ApplyLeaveInput!){
   }
 }
 `;
+
+export const CANCEL_LEAVE = gql`
+  mutation CancelLeave($id: ID!){
+     cancelLeave(id: $id){
+       message
+     }
+  }
+`

@@ -12,7 +12,7 @@ export const resolvers = {
     ...userResolver.Query,
     ...profileResolver.Query,
     ...departmentResolver.Query,
-    ...leaveResolver.Query
+    ...leaveResolver.Query,
   },
 
   Mutation: {
@@ -21,6 +21,6 @@ export const resolvers = {
     ...userResolver.Mutation,
     ...departmentResolver.Mutation,
     ...profileResolver.Mutation,
-    ...leaveResolver.Mutation
+    ...leaveResolver.Mutation,
   },
 };

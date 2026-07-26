@@ -14,7 +14,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { ADD_EMPLOYEE, UPDATE_EMP } from "../../apollo/mutations/adminMutation";
-import { GET_DEPARTMENT, GET_EMP_BY_ID, GET_EMPLOYEE } from "../../apollo/queries/adminQuery";
+import {
+  GET_DEPARTMENT,
+  GET_EMP_BY_ID,
+  GET_EMPLOYEE,
+} from "../../apollo/queries/adminQuery";
+import { toast } from "react-toastify";
 // import type { SelectChangeEvent } from "@mui/material";
 
 interface GetFormData {
@@ -38,12 +43,12 @@ interface FormErrors {
   joiningDate?: string;
 }
 interface DepartmentData {
-  viewDepartment: []
+  viewDepartment: [];
 }
 
 const EditEmployee = () => {
-    const {id} = useParams();
-    console.log(id)
+  const { id } = useParams();
+  console.log(id);
   const navigate = useNavigate();
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState<GetFormData>({
@@ -59,38 +64,38 @@ const EditEmployee = () => {
 
   const [updateEmployee] = useMutation(UPDATE_EMP);
   const { data } = useQuery<DepartmentData>(GET_DEPARTMENT);
-  const {data: empData} = useQuery(GET_EMP_BY_ID, {
-    variables:{
-        id: Number(id)
-    }
+  const { data: empData } = useQuery(GET_EMP_BY_ID, {
+    variables: {
+      id: Number(id),
+    },
   });
 
-//   console.log(empData)
+  //   console.log(empData)
 
   useEffect(() => {
-  if (empData?.getEmployeeById) {
-    const employee = empData.getEmployeeById;
+    if (empData?.getEmployeeById) {
+      const employee = empData.getEmployeeById;
 
-    setFormData({
-      firstName: employee.firstName,
-      lastName: employee.lastName,
-      email: employee.email,
-      phoneNumber: employee.phoneNumber,
-      designation: employee.designation,
-      salary: employee.salary.toString(),
-      joiningDate: employee.joiningDate,
-      departmentId: employee.department[0]?.id.toString() || "",
-    });
-  }
-}, [empData]);
+      setFormData({
+        firstName: employee.firstName,
+        lastName: employee.lastName,
+        email: employee.email,
+        phoneNumber: employee.phoneNumber,
+        designation: employee.designation,
+        salary: employee.salary.toString(),
+        joiningDate: employee.joiningDate,
+        departmentId: employee.department[0]?.id.toString() || "",
+      });
+    }
+  }, [empData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>):void => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const customeValidate = () => {
-    const formErrors:FormErrors = {};
+    const formErrors: FormErrors = {};
     let isValid = true;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
     const stringPattern = /^[A-Za-z\s'-]+$/;
@@ -156,7 +161,7 @@ const EditEmployee = () => {
     const valid = customeValidate();
     if (!valid) return;
     try {
-       await updateEmployee({
+      await updateEmployee({
         variables: {
           input: {
             id: Number(id),
@@ -171,16 +176,18 @@ const EditEmployee = () => {
           },
         },
         refetchQueries: [{ query: GET_EMPLOYEE }],
-  awaitRefetchQueries: true,
+        awaitRefetchQueries: true,
       });
-      
-      navigate("/admin/employees")
+
+      navigate("/admin/employees");
+      toast.success("Updated Successfully", {
+        "autoClose":2000,
+      })
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);
       }
     }
-
   };
 
   // console.log(formData);
@@ -256,7 +263,7 @@ const EditEmployee = () => {
           </Box>
 
           <TextField
-          disabled
+            disabled
             label="Email"
             fullWidth
             sx={{ mb: 3 }}
@@ -308,13 +315,13 @@ const EditEmployee = () => {
                 onChange={handleChange}
               >
                 <MenuItem value="">Select</MenuItem>
-                {data?.viewDepartment.map((dept:{id:string, department:string}) => {
-                  return (
-                    <MenuItem value={dept.id}>
-                      {dept.department}
-                    </MenuItem>
-                  );
-                })}
+                {data?.viewDepartment.map(
+                  (dept: { id: string; department: string }) => {
+                    return (
+                      <MenuItem value={dept.id}>{dept.department}</MenuItem>
+                    );
+                  },
+                )}
               </Select>
             </FormControl>
 
@@ -407,9 +414,3 @@ const EditEmployee = () => {
 };
 
 export default EditEmployee;
-
-
-
-
-
-

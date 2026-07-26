@@ -36,7 +36,7 @@ const adminMenu = [
   {
     text: "Leave Requests",
     icon: <EventNoteIcon />,
-    path:"/admin/leave"
+    path:"/admin/manage-leave"
   },
 ];
 

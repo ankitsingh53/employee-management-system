@@ -19,7 +19,7 @@ import {
   UPDATE_DEPARTMENT,
 } from "../../apollo/mutations/adminMutation";
 import { GET_DEPARTMENT } from "../../apollo/queries/adminQuery";
-// import type { SelectChangeEvent } from "@mui/material";
+import { toast } from "react-toastify";
 
 interface FormErrors {
   department?: string;
@@ -77,6 +77,9 @@ const AddDepartment = () => {
     });
 
     await refetch();
+    toast.success("Removed successfully",{
+      "autoClose": 2000,
+    })
   } catch (error) {
     console.error(error);
   }
@@ -108,6 +111,9 @@ const AddDepartment = () => {
         department: "",
       });
       setEditId(null);
+      toast.success("Department added successfully", {
+        "autoClose": 2000,
+      })
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);

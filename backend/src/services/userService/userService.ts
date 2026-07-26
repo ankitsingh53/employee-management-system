@@ -13,6 +13,9 @@ export const exitingEmployee = async (email: string) => {
   if (!checkEmployee) {
     throw new Error("You are not an employee of this organisation");
   }
+  if (!checkEmployee.status) {
+  throw new Error("Your account has been deactivated.");
+}
 
   return checkEmployee;
 };

@@ -1,17 +1,21 @@
 import {
   Box,
   Button,
-  colors,
+  IconButton,
+  InputAdornment,
   Link,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BackButton from "../BackButton";
 import { useMutation } from "@apollo/client/react";
 import { REGISTER_EMPLOYEE } from "../../apollo/mutations/employeeMutation";
 import { useState } from "react";
+import { toast } from "react-toastify";
+import Loader from "../Loader";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 type FormData = {
   firstName: string;
@@ -34,14 +38,13 @@ const EmployeeRegister = () => {
     email: "",
     password: "",
   });
-  const [response, setResponse] = useState("");
+  const [showCurrent, setShowCurrent] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [registerEmployee, { loading }] = useMutation(REGISTER_EMPLOYEE);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
-    setResponse("");
   };
 
   const customeValidate = () => {
@@ -89,17 +92,28 @@ const EmployeeRegister = () => {
     const valid = customeValidate();
     if (!valid) return;
     try {
-      const {data} = await registerEmployee({
+      const {data} =  await registerEmployee({
         variables: {
           input: formData,
         },
       });
       
+      if(data){
         navigate("/user/login")
+        toast.success("Registered Successfully", {
+          autoClose: 2000,
+        })
+      }
     } catch (err) {
-      if (err instanceof Error) setResponse(err.message);
+      if (err instanceof Error){
+        toast.error(`${err.message}`,{
+          autoClose: 2000,
+        })
+      } 
     }
   };
+
+  if(loading) return <Loader/>
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -140,6 +154,7 @@ const EmployeeRegister = () => {
       </Box>
 
       {/* Right Side */}
+
       <Box
         sx={{
           width: { xs: "100%", md: "50%" },
@@ -176,7 +191,6 @@ const EmployeeRegister = () => {
             <Typography color="text.secondary" sx={{ mb: 3 }}>
               Create your account to continue.
             </Typography>
-            {response && <p style={{ color: "red", fontSize: "20px", fontWeight:"600" }}>{response}</p>}
 
             <TextField
               fullWidth
@@ -219,12 +233,26 @@ const EmployeeRegister = () => {
             <TextField
               fullWidth
               label="Password"
-              type="password"
+              type={showCurrent ? "text" : "password"}
               margin="normal"
               name="password"
               onChange={handleChange}
               value={formData.password}
               autoComplete="on"
+              slotProps={{
+                input:{
+                    endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowCurrent(!showCurrent)}
+                      edge="end"
+                    >
+                      {showCurrent ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+                }
+              }}
             />
             {errors.password && (
               <p style={{ color: "red" }}>{errors.password}</p>

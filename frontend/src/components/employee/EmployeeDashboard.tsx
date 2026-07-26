@@ -1,169 +1,227 @@
 import {
-  Avatar,
   Box,
-  Grid,
+  Button,
+  Chip,
   Paper,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../glolbalStore/store";
+import { MY_LEAVES } from "../../apollo/queries/employeeQuery";
+import { useQuery } from "@apollo/client/react";
+
 
 const EmployeeDashboard = () => {
+  const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
-
-  const dashboardCards = [
-    { title: "Leave Balance", value: 12 },
-    { title: "Pending Leave", value: 2 },
-    { title: "Approved Leave", value: 18 },
-  ];
-
-  const leaveData = [
-    {
-      date: "10 Jul 2026",
-      reason: "Sick Leave",
-      status: "Approved",
-    },
-    {
-      date: "18 Jul 2026",
-      reason: "Casual Leave",
-      status: "Pending",
-    },
-    {
-      date: "22 Jul 2026",
-      reason: "Personal Work",
-      status: "Rejected",
-    },
-  ];
+  const { data } = useQuery(MY_LEAVES);
+  const recentLeaves = data?.myLeaves?.slice(0, 3) || [];
 
   return (
     <Box>
 
-      <Typography variant="h4" fontWeight={700}>
-        Welcome Back, {user?.firstName}
-      </Typography>
 
-      <Grid container spacing={3} sx={{margin: '30px 0'}}>
-        {dashboardCards.map((card) => (
-          <Grid size={{ xs: 12, md: 4 }} key={card.title}>
-            <Paper
-              elevation={2}
-              sx={{
-                p: 3,
-                borderRadius: 2,
-              }}
-            >
-              <Typography color="text.secondary">
-                {card.title}
-              </Typography>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          Welcome Back, {user?.firstName}
+        </Typography>
 
-              <Typography variant="h4" fontWeight="bold" mt={1}>
-                {card.value}
-              </Typography>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
+        <Typography color="text.secondary" sx={{ mt: 1 }}>
+          Have a productive day.
+        </Typography>
+      </Box>
 
-      <Grid container spacing={3} mt={1}>
-        {/* Left */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: {
+            xs: "column",
+            md: "row",
+          },
+          gap: 3,
+        }}
+      >
 
-        {/* <Grid size={{ xs: 12, md: 4 }}>
-          <Paper
-            elevation={2}
+        <Paper
+          sx={{
+            flex: 2,
+            p: 3,
+            borderRadius: 3,
+          }}
+        >
+          <Typography
+            variant="h6"
             sx={{
-              p: 3,
-              borderRadius: 2,
-              textAlign: "center",
+              fontWeight: "bold",
+              mb: 3,
             }}
           >
-            <Avatar
-              sx={{
-                width: 90,
-                height: 90,
-                mx: "auto",
-                mb: 2,
-                fontSize: 32,
-                bgcolor: "#131B63",
-              }}
-            >
-              {user?.firstName?.charAt(0)}
-            </Avatar>
+            Employee Information
+          </Typography>
 
-            <Typography variant="h6" fontWeight={600}>
+          <Box sx={{ mb: 2 }}>
+            <Typography color="text.secondary">
+              Name
+            </Typography>
+
+            <Typography sx={{ fontWeight: "bold" }}>
               {user?.firstName} {user?.lastName}
             </Typography>
+          </Box>
 
+          <Box sx={{ mb: 2 }}>
+            <Typography color="text.secondary" >
+              Email
+            </Typography>
+
+            <Typography sx={{ fontWeight: "bold" }}>{user?.email}</Typography>
+          </Box>
+
+          <Box sx={{ mb: 2 }}>
             <Typography color="text.secondary">
-              {user?.role}
+              Designation
             </Typography>
 
-            <Typography mt={3}>
-              {user?.email}
+            <Typography sx={{ fontWeight: "bold" }}>{user?.designation}</Typography>
+          </Box>
+
+          <Box>
+            <Typography
+              color="text.secondary"
+              sx={{ mb: 1 }}
+            >
+              Status
             </Typography>
 
-            <Typography color="text.secondary">
-              IT Department
-            </Typography>
+            <Chip
+              label="ACTIVE"
+              color="success"
+              size="small"
+            />
+          </Box>
+        </Paper>
 
-            <Typography color="text.secondary">
-              React Developer
-            </Typography>
-          </Paper>
-        </Grid> */}
 
-        {/* <Grid size={{ xs: 12, md: 8 }}>
-          <Paper
-            elevation={2}
+        <Paper
+          sx={{
+            flex: 1,
+            p: 3,
+            borderRadius: 3,
+          }}
+        >
+          <Typography
+            variant="h6"
             sx={{
-              p: 3,
-              borderRadius: 2,
+              fontWeight: "bold",
+              mb: 3,
             }}
           >
-            <Typography
-              variant="h6"
-              fontWeight={600}
-              mb={2}
-            >
-              Recent Leave Requests
-            </Typography>
+            Quick Actions
+          </Typography>
 
-            <Table>
-              <TableHead>
-                <TableRow>
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{ mb: 2 }}
+            onClick={() => navigate("/user/leave")}
+          >
+            Apply Leave
+          </Button>
+
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={() => navigate("/user/profile")}
+          >
+            My Profile
+          </Button>
+        </Paper>
+      </Box>
+
+      <Paper
+        sx={{
+          mt: 4,
+          p: 3,
+          borderRadius: 3,
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: "bold",
+            mb: 2,
+          }}
+        >
+          Recent Leave Requests
+        </Typography>
+
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold" }}>
+                  Leave Type
+                </TableCell>
+
+                <TableCell sx={{ fontWeight: "bold" }}>
+                 Start Date
+                </TableCell>
+
+                <TableCell sx={{ fontWeight: "bold" }}>
+                 End Date
+                </TableCell>
+
+                <TableCell sx={{ fontWeight: "bold" }}>
+                  Status
+                </TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {recentLeaves.map((leave) => (
+                <TableRow key={leave.id}>
                   <TableCell>
-                    <strong>Date</strong>
+                    {leave.leaveType}
                   </TableCell>
 
                   <TableCell>
-                    <strong>Reason</strong>
+                    {new Date(leave.startDate).toLocaleDateString(
+                            "en-IN",
+                          )}
                   </TableCell>
 
                   <TableCell>
-                    <strong>Status</strong>
+                    {new Date(leave.endDate).toLocaleDateString(
+                      "en-IN",
+                    )}
+                  </TableCell>
+
+                  <TableCell>
+                    <Chip
+                      label={leave.status}
+                      size="small"
+                      color={
+                        leave.status === "APPROVED"
+                          ? "success"
+                          : leave.status === "REJECTED"
+                            ? "error"
+                            : "warning"
+                      }
+                    />
                   </TableCell>
                 </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {leaveData.map((leave) => (
-                  <TableRow key={leave.date}>
-                    <TableCell>{leave.date}</TableCell>
-
-                    <TableCell>{leave.reason}</TableCell>
-
-                    <TableCell>{leave.status}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>
-        </Grid> */}
-      </Grid>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
     </Box>
   );
 };

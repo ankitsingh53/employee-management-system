@@ -16,7 +16,12 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { MY_LEAVES } from "../../apollo/queries/employeeQuery";
-import { APPLY_LEAVE } from "../../apollo/mutations/employeeMutation";
+import {
+  APPLY_LEAVE,
+  CANCEL_LEAVE,
+} from "../../apollo/mutations/employeeMutation";
+import { toast } from "react-toastify";
+import Loader from "../Loader";
 
 const LeaveManagement = () => {
   const [formData, setFormData] = useState({
@@ -32,10 +37,10 @@ const LeaveManagement = () => {
     endDate: "",
     reason: "",
   });
-  const { data, refetch } = useQuery(MY_LEAVES);
+  const { data, loading: queryLoading, refetch } = useQuery(MY_LEAVES);
 
-const [applyLeave, { loading }] =
-  useMutation(APPLY_LEAVE);
+  const [applyLeave, { loading }] = useMutation(APPLY_LEAVE);
+  const [cancelLeave] = useMutation(CANCEL_LEAVE);
 
   const handleChange = (e: any) => {
     setFormData({
@@ -50,7 +55,6 @@ const [applyLeave, { loading }] =
   };
 
   const validate = () => {
-    console.log("validate")
     let valid = true;
 
     const err = {
@@ -61,27 +65,27 @@ const [applyLeave, { loading }] =
     };
 
     if (!formData.leaveType.trim()) {
-      err.leaveType = "Required";
+      err.leaveType = "Leave Type Required";
       valid = false;
     }
 
     if (!formData.startDate.trim()) {
-      err.startDate = "Required";
+      err.startDate = "Staet Date Required";
       valid = false;
     }
 
     if (!formData.endDate.trim()) {
-      err.endDate = "Required";
+      err.endDate = " End Date Required";
       valid = false;
     }
 
     if (formData.endDate < formData.startDate) {
-      err.endDate = "End date should be greater";
+      err.endDate = "End date must be after start date";
       valid = false;
     }
 
     if (!formData.reason.trim()) {
-      err.reason = "Required";
+      err.reason = " Reason Required";
       valid = false;
     }
 
@@ -89,38 +93,73 @@ const [applyLeave, { loading }] =
 
     return valid;
   };
+  const handleCancel = () => {
+    setFormData({
+      leaveType: "",
+      startDate: "",
+      endDate: "",
+      reason: "",
+    });
 
+    setErrors({
+      leaveType: "",
+      startDate: "",
+      endDate: "",
+      reason: "",
+    });
+  };
+
+  const handleLeave = async (id: number) => {
+    try {
+      const { data } = await cancelLeave({
+        variables: { id },
+      });
+      toast.success(`${data?.cancelLeave.message}`);
+      refetch();
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.success(`${error.message}`);
+      }
+    }
+  };
 
   const handleSubmit = async (e: any) => {
-    console.log("onsubmit")
     e.preventDefault();
-    console.log(errors)
-
     if (!validate()) return;
 
-    // try {
-    //   await applyLeave({
-    //     variables: {
-    //       input: formData,
-    //     },
-    //   });
+    try {
+      const { data } = await applyLeave({
+        variables: {
+          input: formData,
+        },
+      });
 
-    //   refetch();
+      if (data) {
+        toast.success(`${data?.applyLeave.message}`);
+      }
 
-    //   setFormData({
-    //     leaveType: "",
-    //     startDate: "",
-    //     endDate: "",
-    //     reason: "",
-    //   });
-    // } catch (err) {
-    //   console.log(err);
-    // }
+      refetch();
+      setFormData({
+        leaveType: "",
+        startDate: "",
+        endDate: "",
+        reason: "",
+      });
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(`${err.message}`, {
+          autoClose: 2000,
+        });
+      }
+    }
   };
+  if (queryLoading) {
+    return <Loader />;
+  }
   return (
     <>
-      <Box sx={{marginBottom: '30px'}}>
-        <Typography variant="h4" sx={{fontWeight:"bold"}}>
+      <Box sx={{ marginBottom: "30px" }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
           Leave Management
         </Typography>
 
@@ -134,7 +173,7 @@ const [applyLeave, { loading }] =
       >
         <TextField
           select
-          sx={{marginTop:"10px"}}
+          sx={{ marginTop: "10px" }}
           label="Leave Type"
           name="leaveType"
           value={formData.leaveType}
@@ -147,7 +186,7 @@ const [applyLeave, { loading }] =
 
           <MenuItem value="EARNED">Earned Leave</MenuItem>
         </TextField>
-        {errors && <p style={{color:'red'}}>{errors.leaveType}</p>}
+        {errors && <p style={{ color: "red" }}>{errors.leaveType}</p>}
 
         <TextField
           type="date"
@@ -156,14 +195,14 @@ const [applyLeave, { loading }] =
           value={formData.startDate}
           onChange={handleChange}
           slotProps={{
-            inputLabel:{
-                shrink: true,
-            }
+            inputLabel: {
+              shrink: true,
+            },
           }}
-          sx={{marginTop:"40px"}}
+          sx={{ marginTop: "40px" }}
           fullWidth
         />
-        {errors && <p style={{color:'red'}}>{errors.startDate}</p>}
+        {errors && <p style={{ color: "red" }}>{errors.startDate}</p>}
 
         <TextField
           type="date"
@@ -172,14 +211,14 @@ const [applyLeave, { loading }] =
           value={formData.endDate}
           onChange={handleChange}
           slotProps={{
-            inputLabel:{
-                shrink: true,
-            }
+            inputLabel: {
+              shrink: true,
+            },
           }}
-          sx={{marginTop:"40px"}}
+          sx={{ marginTop: "40px" }}
           fullWidth
         />
-        {errors && <p style={{color:'red'}}>{errors.endDate}</p>}
+        {errors && <p style={{ color: "red" }}>{errors.endDate}</p>}
 
         <TextField
           label="Reason"
@@ -189,72 +228,116 @@ const [applyLeave, { loading }] =
           value={formData.reason}
           onChange={handleChange}
           fullWidth
-          sx={{marginTop:"40px"}}
+          sx={{ marginTop: "40px" }}
         />
-        {errors && <p style={{color:'red'}}>{errors.reason}</p>}
-        <Box sx={{display:"flex", justifyContent:"flex-end", gap:2, mt:3}} >
-          <Button variant="outlined">Cancel</Button>
+        {errors && <p style={{ color: "red" }}>{errors.reason}</p>}
+        <Box
+          sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}
+        >
+          <Button variant="outlined" onClick={handleCancel}>
+            Cancel
+          </Button>
 
           <Button variant="contained" disabled={loading} onClick={handleSubmit}>
             Apply Leave
           </Button>
         </Box>
+      </Paper>
 
-        {data?.myLeaves.length === 0 ? (
-  <Typography>No Leave Requests</Typography>
-) : (
-  <Box>
-    <Typography sx={{variant:"h5", fontWeight:"bold", mt:5, mb:2}}>
+      <Box sx={{ marginTop: "30px" }}>
+        <Typography variant="h5" sx={{ fontWeight: "bold", marginTop: "30px" }}>
           Leave History
         </Typography>
 
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Leave Type</TableCell>
+        {data?.myLeaves.length === 0 ? (
+          <Paper
+            sx={{
+              p: 3,
+              borderRadius: 2,
+              marginTop: "20px",
+            }}
+          >
+            <Typography>No Leave Requests</Typography>
+          </Paper>
+        ) : (
+          <Paper
+            sx={{
+              p: 3,
+              borderRadius: 2,
+              marginTop: "20px",
+            }}
+          >
+            <Box>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Leave Type</TableCell>
 
-                <TableCell>Start Date</TableCell>
+                      <TableCell>Start Date</TableCell>
 
-                <TableCell>End Date</TableCell>
+                      <TableCell>End Date</TableCell>
 
-                <TableCell>Reason</TableCell>
+                      <TableCell>Reason</TableCell>
 
-                <TableCell>Status</TableCell>
-              </TableRow>
-            </TableHead>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
 
-            <TableBody>
-              {data?.myLeaves.map((leave: any) => (
-                <TableRow key={leave.id}>
-                  <TableCell>{leave.leaveType}</TableCell>
+                  <TableBody>
+                    {data?.myLeaves.map((leave: any) => (
+                      <TableRow key={leave.id}>
+                        <TableCell>{leave.leaveType}</TableCell>
 
-                  <TableCell>{new Date(leave.startDate).toLocaleDateString("en-IN")}</TableCell>
+                        <TableCell>
+                          {new Date(leave.startDate).toLocaleDateString(
+                            "en-IN",
+                          )}
+                        </TableCell>
 
-                  <TableCell>{new Date(leave.endDate).toLocaleDateString("en-IN")}</TableCell>
+                        <TableCell>
+                          {new Date(leave.endDate).toLocaleDateString("en-IN")}
+                        </TableCell>
 
-                  <TableCell>{leave.reason}</TableCell>
+                        <TableCell>{leave.reason}</TableCell>
 
-                  <TableCell>
-                    <Chip
-                      label={leave.status}
-                      color={
-                        leave.status === "APPROVED"
-                          ? "success"
-                          : leave.status === "REJECTED"
-                            ? "error"
-                            : "warning"
-                      }
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-  </Box>
-)}
-      </Paper>
+                        <TableCell>
+                          <Chip
+                            label={leave.status}
+                            color={
+                              leave.status === "APPROVED"
+                                ? "success"
+                                : leave.status === "REJECTED"
+                                  ? "error"
+                                  : "warning"
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          {leave.status === "PENDING" ? (
+                            <>
+                              <Button
+                                size="small"
+                                color="error"
+                                onClick={() => handleLeave(leave.id)}
+                              >
+                                Cancel
+                              </Button>
+                            </>
+                          ) : (
+                            "-"
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+          </Paper>
+        )}
+      </Box>
     </>
   );
 };

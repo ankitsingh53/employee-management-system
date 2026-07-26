@@ -24,6 +24,7 @@ export const GET_EMPLOYEE = gql`
     salary
     joiningDate
     role
+    status
     department{
       department
       id
@@ -76,6 +77,7 @@ query AllLeaveRequests {
       lastName
       email
       department {
+        id
         department
       }
     }

@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import AdminLogin from "./components/admin/adminLogin";
 import EmployeeLogin from "./components/employee/EmployeeLogin";
 import EmployeeRegister from "./components/employee/EmployeeRegister";
-import Home from "./components/Home";
+// import Home from "./components/Home";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import DashboardLayout from "./components/DashboardLayout";
 import Employees from "./components/admin/Employees";
@@ -19,12 +19,23 @@ import EditProfile from "./components/employee/EditProfile";
 import ChangePassword from "./components/employee/ChangePassword";
 import LeaveManagement from "./components/employee/LeaveManagement";
 import ManageLeave from "./components/admin/ManageLeave";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import React, { Suspense, lazy } from "react";
+import Loader from "./components/Loader";
+
+const Home = lazy(()=>import('./components/Home'));
 
 const App = () => {
   return (
     <>
+    <ToastContainer/>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={
+          <Suspense fallback={<Loader/>}>
+          <Home/>
+          </Suspense>
+          } />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/user/register" element={<EmployeeRegister />} />
         <Route path="/user/login" element={<EmployeeLogin />} />
@@ -43,7 +54,7 @@ const App = () => {
           <Route path="add-employee" element={<AddEmployee />} />
           <Route path="add-department" element={<AddDepartment />} />
           <Route path="edit-employee/:id" element={<EditEmployee />} />
-          <Route path="leave" element={<ManageLeave/>} />
+          <Route path="manage-leave" element={<ManageLeave/>} />
         </Route>
         <Route
           path="/user"
