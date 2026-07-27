@@ -17,6 +17,14 @@ import { logout } from "../features/auth/authSlice";
 import { LOGOUT_EMPLOYEE } from "../apollo/mutations/employeeMutation";
 import { toast } from "react-toastify";
 
+interface LogoutData {
+  data: {
+    logoutAdmin:{
+      success:string;
+    }
+  }
+}
+
 const NavBar = () => {
   const dispatch = useDispatch();
   const client = useApolloClient();
@@ -41,7 +49,7 @@ const NavBar = () => {
   const handleLogout = async () => {
   try {
     if (user?.role === "ADMIN") {
-      const { data } = await logoutAdmin();
+      const {data} = await logoutAdmin();
 
       if (data?.logoutAdmin?.success) {
         dispatch(logout());

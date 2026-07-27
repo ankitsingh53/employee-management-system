@@ -2,6 +2,7 @@ import { getAdmin } from "../../services/employee/employee.service.js";
 import { authAdmin } from "../../services/admin/adminService.js";
 import { generateToken } from "../../utils/jwt.js";
 import { requireAdmin, requireAuth } from "../../middleware/authorization.js";
+import { getAdminDashboard } from "../../services/admin/adminService.js";
 
 export const adminResolvers = {
   Query: {
@@ -10,6 +11,11 @@ export const adminResolvers = {
       const adminData = await getAdmin(user.id);
       return adminData;
     },
+    adminDashboard: async (_: any, __: any, context: any) => {
+  requireAdmin(context);
+
+  return await getAdminDashboard();
+},
   },
 
   Mutation: {

@@ -13,22 +13,37 @@ export const GET_ADMIN = gql`
 `;
 
 export const GET_EMPLOYEE = gql`
-  query GetEmployee {
-    getEmployee {
-    id
-    firstName
-    lastName
-    email
-    phoneNumber
-    designation
-    salary
-    joiningDate
-    role
-    status
-    department{
-      department
-      id
-    }
+  query GetEmployee(
+  $page: Int!, 
+  $limit: Int!, 
+  $search: String,
+  $status: Boolean,
+  $sortBy: String
+  ) {
+    getEmployee(
+    page: $page, 
+    limit: $limit, 
+    search: $search
+    status: $status,
+    sortBy: $sortBy,
+    ) {
+       totalCount 
+       employees {
+         id
+         firstName
+         lastName
+         email
+         phoneNumber
+         designation
+         salary
+         joiningDate
+         role
+         status
+         department{
+           department
+           id
+       }
+        }
     }
   }
 `;
@@ -83,6 +98,17 @@ query AllLeaveRequests {
     }
   }
 }
+`;
+
+export const GET_ADMIN_DASHBOARD = gql`
+  query AdminDashboard {
+    adminDashboard {
+      totalEmployees
+      activeEmployees
+      totalDepartments
+      pendingLeaves
+    }
+  }
 `;
 
 

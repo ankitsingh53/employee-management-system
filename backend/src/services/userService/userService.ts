@@ -48,3 +48,20 @@ export const getMe = async (id: number) => {
   });
   return data;
 };
+
+export const savePassword = async (email: string, password: string) => {
+  const getEmployee = await userRepo.findOne({
+    where: {
+      email,
+      role: "EMPLOYEE",
+    },
+  });
+
+  if (getEmployee) {
+    getEmployee.password = password;
+    await userRepo.save(getEmployee);
+  }
+  return {
+    message: "Password changed successfully"
+  };
+};

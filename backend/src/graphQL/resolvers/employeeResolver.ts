@@ -9,7 +9,8 @@ export const employeeResolver = {
   Query: {
     getEmployee: async (_: any, args: any, context: any) => {
       requireAdmin(context);
-      return await getAllEmployee();
+      const {page, limit, search, status, sortBy} = args
+      return await getAllEmployee(page, limit, search, status,sortBy);
     },
     getEmployeeById: async (_: any, args: { id: number }, context: any) => {
       requireAdmin(context);

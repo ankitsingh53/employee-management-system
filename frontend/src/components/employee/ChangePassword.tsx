@@ -102,12 +102,14 @@ const ChangePassword = () => {
         },
       });
 
-      console.log(data);
-
+      if(data){
       navigate("/user/profile");
       toast.success("Password changed successfully")
+      }
     } catch (error) {
-      console.log(error);
+      if(error instanceof Error){
+        toast.error(`${error.message}`)
+      }
     }
   };
   return (

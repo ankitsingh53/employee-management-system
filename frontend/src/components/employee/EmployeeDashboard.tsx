@@ -21,7 +21,7 @@ import { useQuery } from "@apollo/client/react";
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
-  const { data } = useQuery(MY_LEAVES);
+  const { data, refetch } = useQuery(MY_LEAVES);
   const recentLeaves = data?.myLeaves?.slice(0, 3) || [];
 
   return (
@@ -162,7 +162,20 @@ const EmployeeDashboard = () => {
           Recent Leave Requests
         </Typography>
 
-        <TableContainer>
+        {!recentLeaves ? (
+          <Typography
+          variant="body1"
+          sx={{
+            mb: 2,
+          }}
+        >
+          No recent activity
+        </Typography>
+        )
+        : 
+        (
+          <Box>
+          <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
@@ -221,6 +234,8 @@ const EmployeeDashboard = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        </Box>
+        )}
       </Paper>
     </Box>
   );

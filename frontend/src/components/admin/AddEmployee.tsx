@@ -14,9 +14,9 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { ADD_EMPLOYEE } from "../../apollo/mutations/adminMutation";
-import { GET_DEPARTMENT } from "../../apollo/queries/adminQuery";
+import { GET_DEPARTMENT, GET_EMPLOYEE } from "../../apollo/queries/adminQuery";
 import { toast } from "react-toastify";
-// import type { SelectChangeEvent } from "@mui/material";
+import Loader from "../Loader";
 
 interface GetFormData {
   firstName: string;
@@ -39,7 +39,7 @@ interface FormErrors {
   joiningDate?: string;
 }
 interface DepartmentData {
-  viewDepartment: []
+  viewDepartment: [];
 }
 
 const AddEmployee = () => {
@@ -57,15 +57,15 @@ const AddEmployee = () => {
   });
 
   const [addEmployee] = useMutation(ADD_EMPLOYEE);
-  const { data } = useQuery<DepartmentData>(GET_DEPARTMENT);
+  const { data, loading } = useQuery<DepartmentData>(GET_DEPARTMENT);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>):void => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const customeValidate = () => {
-    const formErrors:FormErrors = {};
+    const formErrors: FormErrors = {};
     let isValid = true;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
     const stringPattern = /^[A-Za-z\s'-]+$/;
@@ -122,6 +122,10 @@ const AddEmployee = () => {
       formErrors.joiningDate = "Enter date in 'yyyy-mm-dd' format";
       isValid = false;
     }
+    if(!formData.departmentId){
+      formErrors.departmentId = "Select the department";
+      isValid = false;
+    }
     setErrors(formErrors);
     return isValid;
   };
@@ -145,18 +149,19 @@ const AddEmployee = () => {
           },
         },
       });
-      
-        navigate("/admin/employees")
-        toast.success("Added Successfully")
+
+      navigate("/admin/employees");
+      toast.success("Added Successfully");
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
+        toast.error(`${error.message}`)
       }
     }
-
   };
 
-  // console.log(formData);
+  if(loading){
+    return <Loader/>
+  }
 
   return (
     <Box>
@@ -270,6 +275,7 @@ const AddEmployee = () => {
               mb: 3,
             }}
           >
+            <Stack sx={{ flexGrow: "1" }}>
             <FormControl fullWidth>
               <InputLabel>Department</InputLabel>
 
@@ -281,16 +287,27 @@ const AddEmployee = () => {
                 onChange={handleChange}
               >
                 <MenuItem value="">Select</MenuItem>
-                {data?.viewDepartment.map((dept:{id:string, department:string}) => {
-                  return (
-                    <MenuItem value={dept.id}>
-                      {dept.department}
-                    </MenuItem>
-                  );
-                })}
+                {data?.viewDepartment.map(
+                  (dept: { id: string; department: string }) => {
+                    return (
+                      <MenuItem value={dept.id}>{dept.department}</MenuItem>
+                    );
+                  },
+                )}
               </Select>
             </FormControl>
+            {errors && (
+              <Typography
+                variant="overline"
+                gutterBottom
+                sx={{ display: "block", color: "red" }}
+              >
+                {errors.departmentId}
+              </Typography>
+            )}
+            </Stack>
 
+            <Stack sx={{ flexGrow: "1" }}>
             <TextField
               label="Designation"
               fullWidth
@@ -307,6 +324,7 @@ const AddEmployee = () => {
                 {errors.designation}
               </Typography>
             )}
+            </Stack>
           </Box>
           <Box
             sx={{
@@ -380,9 +398,3 @@ const AddEmployee = () => {
 };
 
 export default AddEmployee;
-
-
-
-
-
-

@@ -110,7 +110,6 @@ const EditProfile = () => {
           },
         },
       });
-      console.log(data.updateProfile)
       if(data.updateProfile){
       dispatch(setAuth(data.updateProfile));
       }
@@ -120,7 +119,7 @@ const EditProfile = () => {
       })
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
+        toast.error(`${error.message}`)
       }
     }
 

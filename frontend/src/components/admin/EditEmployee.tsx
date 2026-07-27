@@ -175,8 +175,6 @@ const EditEmployee = () => {
             departmentId: Number(formData.departmentId),
           },
         },
-        refetchQueries: [{ query: GET_EMPLOYEE }],
-        awaitRefetchQueries: true,
       });
 
       navigate("/admin/employees");

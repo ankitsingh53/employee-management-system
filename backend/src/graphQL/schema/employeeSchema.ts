@@ -14,13 +14,24 @@ export const employeeSchema = `#graphql
     department: [Department!]!
   }
 
+  type EmployeePagination {
+     employees: [Employee!]!
+     totalCount: Int!
+}
+
   type Department {
      id: ID!
      department: String!
    }
 
   type Query {
-    getEmployee: [Employee!]!
+    getEmployee(
+    page: Int!, 
+    limit: Int!, 
+    search: String,
+    status: Boolean,
+    sortBy: String
+    ): EmployeePagination!
     getEmployeeById(id: ID!): Employee!
   }
 

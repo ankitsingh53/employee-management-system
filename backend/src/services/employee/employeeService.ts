@@ -1,24 +1,63 @@
 import { AppDataSource } from "../../config/data-source.js";
 import { Department } from "../../entities/department.entity.js";
 import { Employee } from "../../entities/employee.entity.js";
+import { ILike } from "typeorm";
 
 const employeeRepo = await AppDataSource.getRepository(Employee);
 const departmentRepo = await AppDataSource.getRepository(Department);
 
-export const getAllEmployee = async () => {
-  const employeeDetails = await employeeRepo.find({
+export const getAllEmployee = async (
+  page: number,
+  limit: number,
+  search?: string,
+  status?: boolean,
+  sortBy: string ="id"
+) => {
+  const where: any = {
+    role: "EMPLOYEE",
+  };
+
+  if (status !== undefined) {
+    where.status = status;
+  }
+
+  const [employees, totalCount] = await employeeRepo.findAndCount({
+    where: search?.trim()
+      ? [
+          {
+            ...where,
+            firstName: ILike(`%${search}%`),
+          
+          },
+          {
+            ...where,
+            lastName: ILike(`%${search}%`),
+          },
+          {
+            ...where,
+            email: ILike(`%${search}%`),
+          },
+        ]
+      : where,
+
     relations: {
       department: true,
     },
-    where: {
-      role: "EMPLOYEE",
+
+    skip: (page - 1) * limit,
+    take: limit,
+
+    order: {
+      [sortBy]: 'ASC'
     },
   });
-  if (!employeeDetails) {
-    throw new Error("No employee has been registered yet!");
-  }
-  return employeeDetails;
+
+  return {
+    employees,
+    totalCount,
+  };
 };
+
 export const employeeByID = async (id: number) => {
   const getEmployeeDetails = await employeeRepo.findOne({
     relations:{
@@ -44,7 +83,6 @@ export const addEmployee = async (data: any) => {
   if (existingEmployee?.email.length) {
     throw new Error("Employee already exit.");
   }
-  // console.log(data.departmentId)
   const department = await departmentRepo.findOne({
     where: {
       id: data.departmentId,
@@ -53,7 +91,6 @@ export const addEmployee = async (data: any) => {
   if (!department) {
     throw new Error("Department not found");
   }
-  // console.log(department)
   const createEmployee = employeeRepo.create({
     "firstName": data.firstName,
     "lastName": data.lastName,
@@ -64,7 +101,6 @@ export const addEmployee = async (data: any) => {
     "joiningDate": data.joiningDate,
   });
   createEmployee.department = [department];
-  console.log(createEmployee);
   return await employeeRepo.save(createEmployee);
 };
 
@@ -107,7 +143,6 @@ export const deleteEmployee = async (id: number) => {
   }
 
   getEmployee.status = getEmployee.status===true ? false : true; 
-  console.log(getEmployee)
   await employeeRepo.save(getEmployee);
   return {
     message: `Employee ${

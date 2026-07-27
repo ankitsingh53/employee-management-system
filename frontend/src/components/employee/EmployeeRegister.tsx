@@ -117,7 +117,7 @@ const EmployeeRegister = () => {
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      {/* Left Side */}
+      {/*------------- Left side------- */}
       <Box
         sx={{
           width: { xs: 0, md: "50%" },
@@ -153,8 +153,7 @@ const EmployeeRegister = () => {
         </Typography>
       </Box>
 
-      {/* Right Side */}
-
+      {/* ---------Right SIde------------ */}
       <Box
         sx={{
           width: { xs: "100%", md: "50%" },

@@ -1,6 +1,7 @@
 import { AppDataSource } from "../config/data-source.js";
 import { Leave } from "../entities/leaveEntity.js";
 import { Employee } from "../entities/employee.entity.js";
+import { sendLeaveStatusEmail } from "../utils/email.js";
 
 const leaveRepo = AppDataSource.getRepository(Leave);
 const employeeRepo = AppDataSource.getRepository(Employee);
@@ -70,6 +71,9 @@ export const updateLeaveStatus = async (data: any) => {
     where: {
       id: Number(data.id),
     },
+    relations:{
+      employee: true,
+    }
   });
 
   if (!leave) {
@@ -79,6 +83,11 @@ export const updateLeaveStatus = async (data: any) => {
   leave.status = data.status;
 
   await leaveRepo.save(leave);
+  await sendLeaveStatusEmail(
+    leave.employee.email,
+    leave.employee.firstName,
+    leave.status
+  );
 
   return {
     message: "Leave status updated successfully.",

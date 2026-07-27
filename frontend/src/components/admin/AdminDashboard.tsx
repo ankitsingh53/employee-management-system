@@ -16,12 +16,21 @@ import PersonIcon from "@mui/icons-material/Person";
 import BusinessIcon from "@mui/icons-material/Business";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import { useNavigate } from "react-router-dom";
+import {
+  GET_ADMIN_DASHBOARD,
+} from "../../apollo/queries/adminQuery";
+import Loader from "../Loader";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { data, loading, error } = useQuery(GET_ADMIN);
+  const {
+  data: dashboardData,
+  loading: dashboardLoading,
+  error: dashboardError,
+} = useQuery(GET_ADMIN_DASHBOARD);
 
   const user = useSelector((state: RootState) => state.auth.user);
 
@@ -31,9 +40,9 @@ const AdminDashboard = () => {
     }
   }, [data, dispatch]);
 
-  if (loading) return <h2>Loading...</h2>;
+ if (loading || dashboardLoading) return <Loader/>;
 
-  if (error) return <h2>Something went wrong.</h2>;
+if (error || dashboardError) return <h2>Something went wrong.</h2>;
 
   return (
     <Box>
@@ -64,7 +73,7 @@ const AdminDashboard = () => {
           <PeopleIcon color="primary" />
 
           <Typography variant="h4" sx={{ fontWeight: "bold", mt: 1 }}>
-            120
+            {dashboardData?.adminDashboard.totalEmployees}
           </Typography>
 
           <Typography color="text.secondary">
@@ -76,7 +85,7 @@ const AdminDashboard = () => {
           <PersonIcon color="success" />
 
           <Typography variant="h4" sx={{ fontWeight: "bold", mt: 1 }}>
-            95
+            {dashboardData?.adminDashboard.activeEmployees}
           </Typography>
 
           <Typography color="text.secondary">
@@ -88,7 +97,7 @@ const AdminDashboard = () => {
           <BusinessIcon color="warning" />
 
           <Typography variant="h4" sx={{ fontWeight: "bold", mt: 1 }}>
-            8
+            {dashboardData?.adminDashboard.totalDepartments}
           </Typography>
 
           <Typography color="text.secondary">
@@ -100,7 +109,7 @@ const AdminDashboard = () => {
           <EventNoteIcon color="error" />
 
           <Typography variant="h4" sx={{ fontWeight: "bold", mt: 1 }}>
-            14
+            {dashboardData?.adminDashboard.pendingLeaves}
           </Typography>
 
           <Typography color="text.secondary">

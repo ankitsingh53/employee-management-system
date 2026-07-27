@@ -1,4 +1,4 @@
-import { exitingEmployee } from "../../services/userService/userService.js";
+import { exitingEmployee, savePassword } from "../../services/userService/userService.js";
 import { comparePassword, hashPassword } from "../../utils/bcrypt.js";
 import { saveEmployee } from "../../services/userService/userService.js";
 import { generateToken } from "../../utils/jwt.js";
@@ -121,5 +121,39 @@ export const userResolver = {
         message: "Logged out successfully",
       };
     },
+
+    forgotPassword: async(parent:any, args:any)=>{
+      const {email, password} = args.input;
+      console.log(email, password)
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
+      if (!email.trim()) {
+        throw new Error("Email is required!");
+      } else if (!emailRegex.test(email)) {
+        throw new Error("Enter valid email address! (must include @ )");
+      }
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
+      if (!password.trim()) {
+        throw new Error("Password is required");
+      } else if (!passwordRegex.test(password)) {
+        throw new Error(
+          "Password must be minimum 4 characters, one letter & one digit",
+        );
+      }
+      try {
+        const getEmployee = await exitingEmployee(email);
+        if (!getEmployee.isRegistered) {
+          throw new Error("Please register before login...");
+        }
+        const hashpass = await hashPassword(password);
+
+        return await savePassword(getEmployee.email, hashpass);
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        } else {
+          console.log("An unexpected error occurred", error);
+        }
+      }
+    }
   },
 };

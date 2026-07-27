@@ -51,6 +51,9 @@ const ManageLeave = () => {
   if (loading) {
     return <Loader />;
   }
+  if(updating){
+    return <Loader/>
+  }
   if (!data?.allLeaveRequests?.length) {
   return (
     <>

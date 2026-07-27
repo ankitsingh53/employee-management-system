@@ -29,17 +29,26 @@ input RegisterEmployee {
   password: String!
 
 }
+
 input LoginEmployee {
 email: String!
 password: String!
 }
+
+input ForgotPassword {
+email: String!
+password: String!
+}
+
 type LogoutResponse {
   success: Boolean!
   message: String!
 }
+
 type Mutation {
 registerEmployee(input: RegisterEmployee!): Employee!
 loginEmployee (input: LoginEmployee!): AuthResponse!
 logoutEmployee: LogoutResponse!
+forgotPassword(input: ForgotPassword!): AuthResponse
 }
 `;

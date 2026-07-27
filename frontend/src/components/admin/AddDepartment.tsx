@@ -9,6 +9,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Stack,
 } from "@mui/material";
 
 import { useState } from "react";
@@ -20,6 +21,7 @@ import {
 } from "../../apollo/mutations/adminMutation";
 import { GET_DEPARTMENT } from "../../apollo/queries/adminQuery";
 import { toast } from "react-toastify";
+import Loader from "../Loader";
 
 interface FormErrors {
   department?: string;
@@ -31,13 +33,14 @@ const AddDepartment = () => {
   });
   const [err, setErr] = useState({});
   const [editId, setEditId] = useState<number | null>(null);
+  const [popUp, setPopUp] = useState<boolean>(false);
+  const [deleteId, setDeleteId] = useState(null);
   const [addDepartment] = useMutation(ADD_DEPART);
   const { data, loading, error, refetch } = useQuery(GET_DEPARTMENT, {
     fetchPolicy: "cache-and-network",
   });
   const [updateMutation] = useMutation(UPDATE_DEPARTMENT);
   const [deleteMutation] = useMutation(DELETE_DEPARTMENT);
-
 
   const customeValidate = () => {
     const formErrors: FormErrors = {};
@@ -68,22 +71,24 @@ const AddDepartment = () => {
     });
   };
 
-  const removeDepartment = async (id:string)=>{
+  const removeDepartment = async (id: string) => {
     try {
-    await deleteMutation({
-      variables: {
-        id,
-      },
-    });
+      await deleteMutation({
+        variables: {
+          id,
+        },
+      });
 
-    await refetch();
-    toast.success("Removed successfully",{
-      "autoClose": 2000,
-    })
-  } catch (error) {
-    console.error(error);
-  }
-  }
+      await refetch();
+      toast.success("Removed successfully", {
+        autoClose: 2000,
+      });
+    } catch (error) {
+      if(error instanceof Error){
+        toast.error(`${error.message}`)
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -112,20 +117,16 @@ const AddDepartment = () => {
       });
       setEditId(null);
       toast.success("Department added successfully", {
-        "autoClose": 2000,
-      })
+        autoClose: 2000,
+      });
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
-      } else {
-        console.log(error);
+        toast.error(`${error.message}`);
       }
     }
   };
 
-  //   console.log(formData)
-
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loader />;
   if (error) return <p>Error :{error.message}</p>;
 
   return (
@@ -179,7 +180,7 @@ const AddDepartment = () => {
               onClick={() => {
                 setFormData({ ...formData, department: "" });
                 setEditId(null);
-                setErr({...err, department: ""})
+                setErr({ ...err, department: "" });
               }}
             >
               Clear
@@ -228,7 +229,7 @@ const AddDepartment = () => {
 
                 <TableCell>{department.department}</TableCell>
 
-                <TableCell align="center" >
+                <TableCell align="center">
                   <Button
                     variant="outlined"
                     size="small"
@@ -237,11 +238,14 @@ const AddDepartment = () => {
                     Edit
                   </Button>
 
-                  <Button 
-                  color="error" 
-                  size="small"
-                  sx={{ml:'20px'}}
-                  onClick={()=>removeDepartment(department.id)}
+                  <Button
+                    color="error"
+                    size="small"
+                    sx={{ ml: "20px" }}
+                    onClick={() => {
+                      setDeleteId(department.id);
+                      setPopUp(true);
+                    }}
                   >
                     Delete
                   </Button>
@@ -251,6 +255,51 @@ const AddDepartment = () => {
           </TableBody>
         </Table>
       </Paper>
+
+      {popUp && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 999,
+          }}
+        >
+          <Box
+            sx={{
+              background: "white",
+              padding: "30px",
+              borderRadius: "10px",
+              textAlign: "center",
+            }}
+          >
+            <h3>Are you sure you want to delete?</h3>
+            <Stack direction="row" spacing={1} sx={{ marginTop: "10px" }}>
+              <Button variant="contained" onClick={() => setPopUp(false)}>
+                Cancel
+              </Button>
+
+              <Button
+                onClick={() => {
+                  if (deleteId !== null) {
+                    removeDepartment(deleteId);
+                  }
+                  setPopUp(false);
+                }}
+                sx={{ backgroundColor: "rgb(161, 9, 9)", color: "white" }}
+              >
+                Yes
+              </Button>
+            </Stack>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };

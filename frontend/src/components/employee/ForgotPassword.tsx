@@ -3,7 +3,6 @@ import {
   Button,
   IconButton,
   InputAdornment,
-  Link,
   Paper,
   TextField,
   Typography,
@@ -11,34 +10,31 @@ import {
 import { useNavigate } from "react-router-dom";
 import BackButton from "../BackButton";
 import React, { useState } from "react";
-import { useApolloClient, useMutation } from "@apollo/client/react";
-import { LOGIN_EMPLOYEE } from "../../apollo/mutations/employeeMutation";
-import { useDispatch } from "react-redux";
-import { GET_USER } from "../../apollo/queries/employeeQuery";
-import { setAuth } from "../../features/auth/authSlice";
-import { toast } from "react-toastify";
-import Loader from "../Loader";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useMutation } from "@apollo/client/react";
+import { FORGOT_PASSWORD } from "../../apollo/mutations/employeeMutation";
+import { toast } from "react-toastify";
 
 interface FormData {
   email: string;
-  password: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 interface FormError {
   email?: string;
-  password?: string;
+  newPassword?: string;
+  confirmPassword?: string;
 }
 
-const EmployeeLogin = () => {
+const ForgotPassword = () => {
   const navigate = useNavigate();
-  const client = useApolloClient();
-  const dispatch = useDispatch();
-  const [loginEmployee, { loading }] = useMutation(LOGIN_EMPLOYEE);
   const [showCurrent, setShowCurrent] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     email: "",
-    password: "",
+    newPassword: "",
+    confirmPassword: "",
   });
+  const [forgotPassword] = useMutation(FORGOT_PASSWORD)
   const [errors, setErrors] = useState<FormError>({});
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -57,12 +53,19 @@ const EmployeeLogin = () => {
       formErrors.email = "Enter valid email address and must include @";
       isValid = false;
     }
-    if (!formData.password.trim()) {
-      formErrors.password = "Password is mandatory";
+    if (!formData.newPassword.trim()) {
+      formErrors.newPassword= "New Password is required";
       isValid = false;
-    } else if (!passwordRegex.test(formData.password)) {
-      formErrors.password =
+    } else if (!passwordRegex.test(formData.newPassword)) {
+      formErrors.newPassword =
         "Password must be minimum 4 characters, one letter & one digit";
+      isValid = false;
+    }
+    if (!formData.confirmPassword.trim()) {
+      formErrors.confirmPassword= "Confirm Password is required";
+      isValid = false;
+    } else if (formData.newPassword !== formData.confirmPassword) {
+      formErrors.confirmPassword = "Passwords does not match";
       isValid = false;
     }
     setErrors(formErrors);
@@ -73,73 +76,32 @@ const EmployeeLogin = () => {
     e.preventDefault();
     const valid = customeValidate();
     if (!valid) return;
+
     try {
-      const { data } = await loginEmployee({
-        variables: {
-          input: formData,
-        },
-      });
-      if (data?.loginEmployee?.message) {
-        const userData = await client.query({
-          query: GET_USER,
-          fetchPolicy: "network-only",
-        });
-        dispatch(setAuth(userData.data.getUser));
-        navigate("/user/dashboard");
-        toast.success("Login Successfully", {
-          autoClose: 2000,
-        });
+      const {data} = await forgotPassword({
+        variables:{
+          input:{
+          email: formData.email,
+          password: formData.newPassword,
+        }
+      }
+      })
+      console.log(data)
+      if(data){
+        navigate("/user/login")
+        toast.success(`${data?.forgotPassword.message}`)
       }
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(`${error.message}`, {
-          autoClose: 2000,
-        });
+      if(error instanceof Error){
+        console.log(error)
+        toast.error(`${error.message}`)
       }
     }
-  };
 
-  if (loading) return <Loader />;
+  };
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      {/*------------ Left Side ---------------*/}
-      <Box
-        sx={{
-          width: { xs: 0, md: "50%" },
-          display: { xs: "none", md: "flex" },
-          flexDirection: "column",
-          justifyContent: "center",
-          bgcolor: "#131B63",
-          color: "#fff",
-          px: 8,
-        }}
-      >
-        <Typography
-          sx={{
-            fontSize: "52px",
-            fontWeight: 700,
-            lineHeight: 1.2,
-          }}
-        >
-          Employee
-          <br />
-          Management System
-        </Typography>
-
-        <Typography
-          sx={{
-            mt: 3,
-            fontSize: "17px",
-            color: "#D1D5DB",
-            maxWidth: 420,
-          }}
-        >
-          Access your employee account securely and manage your profile.
-        </Typography>
-      </Box>
-
-      {/*------- Right Side-------------- */}
       <Box
         sx={{
           width: { xs: "100%", md: "50%" },
@@ -147,8 +109,10 @@ const EmployeeLogin = () => {
           justifyContent: "center",
           alignItems: "center",
           p: 3,
+          margin: 'auto',
         }}
       >
+        
         <Paper
           elevation={0}
           sx={{
@@ -156,7 +120,7 @@ const EmployeeLogin = () => {
             maxWidth: 420,
           }}
         >
-          <BackButton path="/user/register" />
+        <BackButton path="/user/login"/>
           <Box component="form" noValidate onSubmit={handleSubmit}>
             <Typography
               sx={{
@@ -165,11 +129,11 @@ const EmployeeLogin = () => {
                 mb: 1,
               }}
             >
-              Employee Login
+              Forgot Password
             </Typography>
 
             <Typography color="text.secondary" sx={{ mb: 4 }}>
-              Sign in to access your account.
+             Change your password
             </Typography>
 
             <Typography sx={{ mb: 1, fontWeight: 500 }}>Email</Typography>
@@ -193,14 +157,15 @@ const EmployeeLogin = () => {
               </Typography>
             )}
 
-            <Typography sx={{ mb: 1, fontWeight: 500 }}>Password</Typography>
+            <Typography sx={{ mb: 1, fontWeight: 500 }}>New Password</Typography>
 
             <TextField
               fullWidth
               type={showCurrent ? "text" : "password"}
+              sx={{ mb: 2 }}
               placeholder="Enter your password"
-              name="password"
-              value={formData.password}
+              name="newPassword"
+              value={formData.newPassword}
               onChange={handleChange}
               autoComplete="on"
               slotProps={{
@@ -224,33 +189,45 @@ const EmployeeLogin = () => {
                 gutterBottom
                 sx={{ display: "block", color: "red" }}
               >
-                {errors.password}
+                {errors.newPassword}
               </Typography>
             )}
 
-            <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              mt: 2,
-            }}
-          >
-            <Link
-              component="button"
-              underline="hover"
-              onClick={() => navigate("/user/register")}
-            >
-              Register
-            </Link>
+            <Typography sx={{ mb: 1, fontWeight: 500 }}>Confirm Password</Typography>
 
-            <Link
-              component="button"
-              underline="hover"
-              onClick={() => navigate("/user/forgot-password")}
-            >
-              Forgot Password?
-            </Link>
-          </Box>
+            <TextField
+              fullWidth
+              sx={{ mb: 2 }}
+              type={showCurrent ? "text" : "password"}
+              placeholder="Enter your password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              autoComplete="on"
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowCurrent(!showCurrent)}
+                        edge="end"
+                      >
+                        {showCurrent ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            {errors && (
+              <Typography
+                variant="overline"
+                gutterBottom
+                sx={{ display: "block", color: "red" }}
+              >
+                {errors.confirmPassword}
+              </Typography>
+            )}
 
             <Button
               fullWidth
@@ -263,7 +240,7 @@ const EmployeeLogin = () => {
                 borderRadius: 2,
               }}
             >
-              Sign In
+              Change Password
             </Button>
           </Box>
 
@@ -282,4 +259,4 @@ const EmployeeLogin = () => {
   );
 };
 
-export default EmployeeLogin;
+export default ForgotPassword;

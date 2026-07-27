@@ -71,4 +71,12 @@ export const CANCEL_LEAVE = gql`
        message
      }
   }
-`
+`;
+
+export const FORGOT_PASSWORD = gql`
+  mutation ForgotPassword($input: ForgotPassword!) {
+     forgotPassword(input: $input){
+       message
+     }
+  }
+`;

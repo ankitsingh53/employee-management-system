@@ -15,37 +15,91 @@ import {
   TableCell,
   TableBody,
   Chip,
+  Stack,
 } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from "react-router-dom";
 import { GET_EMPLOYEE } from "../../apollo/queries/adminQuery";
 import { DELETE_EMP } from "../../apollo/mutations/adminMutation";
 import { toast } from "react-toastify";
+import Loader from "../Loader";
+import { useState, useEffect } from "react";
+import TablePagination from "@mui/material/TablePagination";
 
 const Employees = () => {
   const navigate = useNavigate();
-  const { data, loading, error } = useQuery(GET_EMPLOYEE);
-  console.log(data);
+  const [page, setPage] = useState(0);
+  const [message, setMessage] = useState<boolean>(false)
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [status, setStatus] = useState<boolean | undefined>(undefined);
+  const [sortBy, setSortBy] = useState("id");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const { data, loading, error } = useQuery(GET_EMPLOYEE, {
+    variables: {
+      page: page + 1,
+      limit: rowsPerPage,
+      search: debouncedSearch,
+      status,
+      sortBy,
+    },
+  });
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setRowsPerPage(parseInt(event.target.value));
+
+    setPage(0);
+  };
   const [deleteEmployee] = useMutation(DELETE_EMP);
-  // console.log(data)
   const handleDelete = async (id: number) => {
     try {
       await deleteEmployee({
         variables: {
           id,
         },
-        refetchQueries: [{ query: GET_EMPLOYEE }],
+        refetchQueries: [
+          {
+            query: GET_EMPLOYEE,
+            variables: {
+              page: page + 1,
+              limit: rowsPerPage,
+            },
+          },
+        ],
         awaitRefetchQueries: true,
       });
-      toast.success("Deleted Successfully", {
+      if(!message){
+        toast.success(" Deactivated Successfully", {
         autoClose: 2000,
       });
+      } else{
+        toast.success(" Activated Successfully", {
+        autoClose: 2000,
+      });
+      }
     } catch (error) {
-      console.log(error);
+      toast.error(`${error}`);
     }
   };
+
+  if (loading) return <Loader />;
+  if (error) return <h2>`Error: ${error.message}`</h2>;
   return (
     <Box sx={{ width: "100%" }}>
-      {/* Header */}
 
       <Box
         sx={{
@@ -71,8 +125,6 @@ const Employees = () => {
         </Button>
       </Box>
 
-      {/* Search */}
-
       <Paper
         elevation={2}
         sx={{
@@ -87,37 +139,61 @@ const Employees = () => {
             gap: 2,
           }}
         >
-          <TextField label="Search Employee" fullWidth />
+          <TextField
+            label="Search Employee"
+            fullWidth
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(0);
+            }}
+          />
 
           <FormControl sx={{ width: 180 }}>
-            <InputLabel>Department</InputLabel>
+            <InputLabel>Sort By</InputLabel>
 
-            <Select label="Department" defaultValue="">
-              <MenuItem value="">All</MenuItem>
-
-              <MenuItem value="IT">IT</MenuItem>
-
-              <MenuItem value="HR">HR</MenuItem>
-
-              <MenuItem value="Finance">Finance</MenuItem>
+            <Select
+              value={sortBy}
+              label="Sort By"
+              onChange={(e) => {
+                setSortBy(e.target.value);
+              }}
+            >
+              <MenuItem value="id">ID</MenuItem>
+              <MenuItem value="firstName">Name</MenuItem>
+              <MenuItem value="salary">Salary</MenuItem>
+              <MenuItem value="joiningDate">Joining Date</MenuItem>
             </Select>
           </FormControl>
 
           <FormControl sx={{ width: 180 }}>
             <InputLabel>Status</InputLabel>
 
-            <Select label="Status" defaultValue="">
+            <Select
+              label="Status"
+              defaultValue=""
+              value={status === undefined ? "" : status.toString()}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (value === "") {
+                  setStatus(undefined);
+                } else {
+                  setStatus(value === "true");
+                }
+
+                setPage(0);
+              }}
+            >
               <MenuItem value="">All</MenuItem>
 
-              <MenuItem value="Active">Active</MenuItem>
+              <MenuItem value="true">Active</MenuItem>
 
-              <MenuItem value="Inactive">Inactive</MenuItem>
+              <MenuItem value="false">Inactive</MenuItem>
             </Select>
           </FormControl>
         </Box>
       </Paper>
-
-      {/* Table */}
 
       <Paper
         elevation={2}
@@ -153,64 +229,123 @@ const Employees = () => {
           </TableHead>
 
           <TableBody>
-            {data?.getEmployee.map((employee) => (
-              <TableRow 
-              key={employee.id} 
-              sx={{
-                backgroundColor: employee.status === true ? "#f5f5f5" : "inherit",
-              }}
-              hover
+            {data?.getEmployee?.employees.map((employee) => (
+              <TableRow
+                key={employee.id}
+                sx={{
+                  backgroundColor:
+                    employee.status === true ? "#f5f5f5" : "inherit",
+                }}
+                hover
               >
-                <TableCell>{employee.id}</TableCell>
+                <TableCell
+                  sx={{ opacity: employee.status === false ? 0.5 : 1 }}
+                >
+                  {employee.id}
+                </TableCell>
 
-                <TableCell>{employee.firstName}</TableCell>
+                <TableCell
+                  sx={{ opacity: employee.status === false ? 0.5 : 1 }}
+                >
+                  {employee.firstName}
+                </TableCell>
 
-                <TableCell>{employee.email}</TableCell>
+                <TableCell
+                  sx={{ opacity: employee.status === false ? 0.5 : 1 }}
+                >
+                  {employee.email}
+                </TableCell>
 
-                <TableCell>
+                <TableCell
+                  sx={{ opacity: employee.status === false ? 0.5 : 1 }}
+                >
                   {employee?.department[0]
                     ? employee?.department[0].department
                     : "Not assigned"}
                 </TableCell>
 
-                <TableCell>{employee.phoneNumber}</TableCell>
+                <TableCell
+                  sx={{ opacity: employee.status === false ? 0.5 : 1 }}
+                >
+                  {employee.phoneNumber}
+                </TableCell>
 
-                <TableCell>{employee.designation}</TableCell>
+                <TableCell
+                  sx={{ opacity: employee.status === false ? 0.5 : 1 }}
+                >
+                  {employee.designation}
+                </TableCell>
 
-                <TableCell>{employee.salary}</TableCell>
+                <TableCell
+                  sx={{ opacity: employee.status === false ? 0.5 : 1 }}
+                >
+                  {employee.salary}
+                </TableCell>
 
-                <TableCell>{employee.joiningDate}</TableCell>
+                <TableCell
+                  sx={{ opacity: employee.status === false ? 0.5 : 1 }}
+                >
+                  {employee.joiningDate}
+                </TableCell>
 
                 <TableCell>
                   <Chip
-                    label={employee.status ? "Active":"Inactive"}
+                    label={employee.status ? "Active" : "Inactive"}
                     color={employee.status === true ? "success" : "error"}
                   />
                 </TableCell>
 
                 <TableCell align="center">
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() =>
-                      navigate(`/admin/edit-employee/${employee.id}`)
-                    }
-                  >
-                    Edit
-                  </Button>
-
-                  <Button
-                    color={employee.status === true ? "error" : "success"}
-                    size="small"
-                    onClick={() => handleDelete(employee.id)}
-                  >
-                    {employee.status ? "Deactivate" : "Activate"}
-                  </Button>
+                  {employee.status === true ? (
+                      <Stack spacing={0.2}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() =>
+                          navigate(`/admin/edit-employee/${employee.id}`)
+                        }
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                       variant="outlined" startIcon={<DeleteIcon />}
+                        color={employee.status === true ? "error" : "success"}
+                        size="small"
+                        onClick={() => {
+                          handleDelete(employee.id)
+                          setMessage(true)
+                        }}
+                      >
+                        {employee.status ? "" : "Activate"}
+                      </Button>
+                      </Stack>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color={employee.status === true ? "error" : "success"}
+                      size="small"
+                      onClick={() => {
+                        handleDelete(employee.id)
+                        setMessage(false);
+                      }}
+                    >
+                      {employee.status ? "Deactivate" : "Activate"}
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        <TablePagination
+          component="div"
+          count={data?.getEmployee.totalCount ?? 0}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[5, 7, 10]}
+        />
       </Paper>
     </Box>
   );

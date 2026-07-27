@@ -7,6 +7,12 @@ type Employee {
  email: String!
  role: String!
 }
+ type AdminDashboard {
+  totalEmployees: Int!
+  activeEmployees: Int!
+  totalDepartments: Int!
+  pendingLeaves: Int!
+}
 
 type AuthResponse {
   message: String!
@@ -14,6 +20,7 @@ type AuthResponse {
 
 type Query {
 getMe: Employee
+adminDashboard: AdminDashboard!
 }
 
 

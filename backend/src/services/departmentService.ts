@@ -35,7 +35,6 @@ export const changeDepartment = async (id:number, data:string)=>{
     }
      Object.assign(department, data)
      return await departmentRepo.save(department)
-    // console.log(department)
 }
 
 export const removeDepartment = async(id:number)=>{
