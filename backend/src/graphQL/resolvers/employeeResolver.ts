@@ -90,8 +90,6 @@ export const employeeResolver = {
       }
       if (!Number(data.salary)) {
         throw new Error("Salary is required !");
-      } else if (!salaryRegex.test(Number(data.salary))) {
-        throw new Error("Enter only numeric characters");
       }
       const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
       if (!data.joiningDate.trim()) {
@@ -138,8 +136,6 @@ export const employeeResolver = {
       const salaryRegex = /^(0|[1-9]\d*)(\.\d+)?$/;
       if (!Number(updatedData.salary)) {
         throw new Error("Salary is required !");
-      } else if (!salaryRegex.test(updatedData.salary)) {
-        throw new Error("Enter only numeric characters");
       }
       const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
       if (!updatedData.joiningDate.trim()) {
