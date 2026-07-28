@@ -13,12 +13,8 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client/react";
-import { ADD_EMPLOYEE, UPDATE_EMP } from "../../apollo/mutations/adminMutation";
-import {
-  GET_DEPARTMENT,
-  GET_EMP_BY_ID,
-  GET_EMPLOYEE,
-} from "../../apollo/queries/adminQuery";
+import { UPDATE_EMP } from "../../apollo/mutations/adminMutation";
+import { GET_DEPARTMENT, GET_EMP_BY_ID } from "../../apollo/queries/adminQuery";
 import { toast } from "react-toastify";
 // import type { SelectChangeEvent } from "@mui/material";
 
@@ -45,6 +41,24 @@ interface FormErrors {
 interface DepartmentData {
   viewDepartment: [];
 }
+interface EmployeeData {
+  getEmployeeById: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    departmentId: string;
+    designation: string;
+    salary: number;
+    joiningDate: string;
+    role: "ADMIN" | "EMPLOYEE";
+    status: boolean;
+    department: Array<{
+      id: number;
+      department: string;
+    }>;
+  };
+}
 
 const EditEmployee = () => {
   const { id } = useParams();
@@ -64,13 +78,11 @@ const EditEmployee = () => {
 
   const [updateEmployee] = useMutation(UPDATE_EMP);
   const { data } = useQuery<DepartmentData>(GET_DEPARTMENT);
-  const { data: empData } = useQuery(GET_EMP_BY_ID, {
+  const { data: empData } = useQuery<EmployeeData>(GET_EMP_BY_ID, {
     variables: {
       id: Number(id),
     },
   });
-
-  //   console.log(empData)
 
   useEffect(() => {
     if (empData?.getEmployeeById) {
@@ -89,7 +101,7 @@ const EditEmployee = () => {
     }
   }, [empData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
@@ -179,8 +191,8 @@ const EditEmployee = () => {
 
       navigate("/admin/employees");
       toast.success("Updated Successfully", {
-        "autoClose":2000,
-      })
+        autoClose: 2000,
+      });
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);

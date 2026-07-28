@@ -17,17 +17,24 @@ import type { RootState } from "../../glolbalStore/store";
 import { MY_LEAVES } from "../../apollo/queries/employeeQuery";
 import { useQuery } from "@apollo/client/react";
 
+interface UserLeaves {
+  myLeaves: Array<{
+    id: string;
+    leaveType: string;
+    startDate: string;
+    endDate: string;
+    status: string;
+  }>;
+}
 
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
-  const { data, refetch } = useQuery(MY_LEAVES);
+  const { data } = useQuery<UserLeaves>(MY_LEAVES);
   const recentLeaves = data?.myLeaves?.slice(0, 3) || [];
 
   return (
     <Box>
-
-
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
           Welcome Back, {user?.firstName}
@@ -48,7 +55,6 @@ const EmployeeDashboard = () => {
           gap: 3,
         }}
       >
-
         <Paper
           sx={{
             flex: 2,
@@ -67,9 +73,7 @@ const EmployeeDashboard = () => {
           </Typography>
 
           <Box sx={{ mb: 2 }}>
-            <Typography color="text.secondary">
-              Name
-            </Typography>
+            <Typography color="text.secondary">Name</Typography>
 
             <Typography sx={{ fontWeight: "bold" }}>
               {user?.firstName} {user?.lastName}
@@ -77,37 +81,27 @@ const EmployeeDashboard = () => {
           </Box>
 
           <Box sx={{ mb: 2 }}>
-            <Typography color="text.secondary" >
-              Email
-            </Typography>
+            <Typography color="text.secondary">Email</Typography>
 
             <Typography sx={{ fontWeight: "bold" }}>{user?.email}</Typography>
           </Box>
 
           <Box sx={{ mb: 2 }}>
-            <Typography color="text.secondary">
-              Designation
-            </Typography>
+            <Typography color="text.secondary">Designation</Typography>
 
-            <Typography sx={{ fontWeight: "bold" }}>{user?.designation}</Typography>
+            <Typography sx={{ fontWeight: "bold" }}>
+              {user?.designation}
+            </Typography>
           </Box>
 
           <Box>
-            <Typography
-              color="text.secondary"
-              sx={{ mb: 1 }}
-            >
+            <Typography color="text.secondary" sx={{ mb: 1 }}>
               Status
             </Typography>
 
-            <Chip
-              label="ACTIVE"
-              color="success"
-              size="small"
-            />
+            <Chip label="ACTIVE" color="success" size="small" />
           </Box>
         </Paper>
-
 
         <Paper
           sx={{
@@ -164,77 +158,65 @@ const EmployeeDashboard = () => {
 
         {!recentLeaves ? (
           <Typography
-          variant="body1"
-          sx={{
-            mb: 2,
-          }}
-        >
-          No recent activity
-        </Typography>
-        )
-        : 
-        (
+            variant="body1"
+            sx={{
+              mb: 2,
+            }}
+          >
+            No recent activity
+          </Typography>
+        ) : (
           <Box>
-          <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>
-                  Leave Type
-                </TableCell>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      Leave Type
+                    </TableCell>
 
-                <TableCell sx={{ fontWeight: "bold" }}>
-                 Start Date
-                </TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      Start Date
+                    </TableCell>
 
-                <TableCell sx={{ fontWeight: "bold" }}>
-                 End Date
-                </TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>End Date</TableCell>
 
-                <TableCell sx={{ fontWeight: "bold" }}>
-                  Status
-                </TableCell>
-              </TableRow>
-            </TableHead>
+                    <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
+                  </TableRow>
+                </TableHead>
 
-            <TableBody>
-              {recentLeaves.map((leave) => (
-                <TableRow key={leave.id}>
-                  <TableCell>
-                    {leave.leaveType}
-                  </TableCell>
+                <TableBody>
+                  {recentLeaves.map((leave) => (
+                    <TableRow key={leave.id}>
+                      <TableCell>{leave.leaveType}</TableCell>
 
-                  <TableCell>
-                    {new Date(leave.startDate).toLocaleDateString(
-                            "en-IN",
-                          )}
-                  </TableCell>
+                      <TableCell>
+                        {new Date(leave.startDate).toLocaleDateString("en-IN")}
+                      </TableCell>
 
-                  <TableCell>
-                    {new Date(leave.endDate).toLocaleDateString(
-                      "en-IN",
-                    )}
-                  </TableCell>
+                      <TableCell>
+                        {new Date(leave.endDate).toLocaleDateString("en-IN")}
+                      </TableCell>
 
-                  <TableCell>
-                    <Chip
-                      label={leave.status}
-                      size="small"
-                      color={
-                        leave.status === "APPROVED"
-                          ? "success"
-                          : leave.status === "REJECTED"
-                            ? "error"
-                            : "warning"
-                      }
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        </Box>
+                      <TableCell>
+                        <Chip
+                          label={leave.status}
+                          size="small"
+                          color={
+                            leave.status === "APPROVED"
+                              ? "success"
+                              : leave.status === "REJECTED"
+                                ? "error"
+                                : "warning"
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
         )}
       </Paper>
     </Box>

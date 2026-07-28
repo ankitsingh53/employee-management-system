@@ -8,7 +8,7 @@ interface Props {
 
 const EmployeeRoute = ({ children }: Props) => {
   const { isAuthenticated, loading, role } = useSelector(
-    (state: RootState) => state.auth
+    (state: RootState) => state.auth,
   );
 
   if (loading) {

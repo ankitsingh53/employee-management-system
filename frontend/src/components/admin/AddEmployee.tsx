@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { ADD_EMPLOYEE } from "../../apollo/mutations/adminMutation";
-import { GET_DEPARTMENT, GET_EMPLOYEE } from "../../apollo/queries/adminQuery";
+import { GET_DEPARTMENT } from "../../apollo/queries/adminQuery";
 import { toast } from "react-toastify";
 import Loader from "../Loader";
 
@@ -59,7 +59,7 @@ const AddEmployee = () => {
   const [addEmployee] = useMutation(ADD_EMPLOYEE);
   const { data, loading } = useQuery<DepartmentData>(GET_DEPARTMENT);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleChange = (e: any): void => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
@@ -122,7 +122,7 @@ const AddEmployee = () => {
       formErrors.joiningDate = "Enter date in 'yyyy-mm-dd' format";
       isValid = false;
     }
-    if(!formData.departmentId){
+    if (!formData.departmentId) {
       formErrors.departmentId = "Select the department";
       isValid = false;
     }
@@ -135,7 +135,7 @@ const AddEmployee = () => {
     const valid = customeValidate();
     if (!valid) return;
     try {
-      const employeeData = await addEmployee({
+      await addEmployee({
         variables: {
           input: {
             firstName: formData.firstName,
@@ -154,13 +154,13 @@ const AddEmployee = () => {
       toast.success("Added Successfully");
     } catch (error) {
       if (error instanceof Error) {
-        toast.error(`${error.message}`)
+        toast.error(`${error.message}`);
       }
     }
   };
 
-  if(loading){
-    return <Loader/>
+  if (loading) {
+    return <Loader />;
   }
 
   return (
@@ -276,54 +276,54 @@ const AddEmployee = () => {
             }}
           >
             <Stack sx={{ flexGrow: "1" }}>
-            <FormControl fullWidth>
-              <InputLabel>Department</InputLabel>
+              <FormControl fullWidth>
+                <InputLabel>Department</InputLabel>
 
-              <Select
-                label="Department"
-                defaultValue=""
-                name="departmentId"
-                value={formData.departmentId}
-                onChange={handleChange}
-              >
-                <MenuItem value="">Select</MenuItem>
-                {data?.viewDepartment.map(
-                  (dept: { id: string; department: string }) => {
-                    return (
-                      <MenuItem value={dept.id}>{dept.department}</MenuItem>
-                    );
-                  },
-                )}
-              </Select>
-            </FormControl>
-            {errors && (
-              <Typography
-                variant="overline"
-                gutterBottom
-                sx={{ display: "block", color: "red" }}
-              >
-                {errors.departmentId}
-              </Typography>
-            )}
+                <Select
+                  label="Department"
+                  defaultValue=""
+                  name="departmentId"
+                  value={formData.departmentId}
+                  onChange={handleChange}
+                >
+                  <MenuItem value="">Select</MenuItem>
+                  {data?.viewDepartment.map(
+                    (dept: { id: string; department: string }) => {
+                      return (
+                        <MenuItem value={dept.id}>{dept.department}</MenuItem>
+                      );
+                    },
+                  )}
+                </Select>
+              </FormControl>
+              {errors && (
+                <Typography
+                  variant="overline"
+                  gutterBottom
+                  sx={{ display: "block", color: "red" }}
+                >
+                  {errors.departmentId}
+                </Typography>
+              )}
             </Stack>
 
             <Stack sx={{ flexGrow: "1" }}>
-            <TextField
-              label="Designation"
-              fullWidth
-              name="designation"
-              value={formData.designation}
-              onChange={handleChange}
-            />
-            {errors && (
-              <Typography
-                variant="overline"
-                gutterBottom
-                sx={{ display: "block", color: "red" }}
-              >
-                {errors.designation}
-              </Typography>
-            )}
+              <TextField
+                label="Designation"
+                fullWidth
+                name="designation"
+                value={formData.designation}
+                onChange={handleChange}
+              />
+              {errors && (
+                <Typography
+                  variant="overline"
+                  gutterBottom
+                  sx={{ display: "block", color: "red" }}
+                >
+                  {errors.designation}
+                </Typography>
+              )}
             </Stack>
           </Box>
           <Box

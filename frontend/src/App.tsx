@@ -6,37 +6,38 @@ import EmployeeRegister from "./components/employee/EmployeeRegister";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import DashboardLayout from "./components/DashboardLayout";
 import Employees from "./components/admin/Employees";
-import Departments from "./components/admin/Departments";
-// import Leave from "./components/admin/Leave";
 import AddEmployee from "./components/admin/AddEmployee";
 import AddDepartment from "./components/admin/AddDepartment";
 import EmployeeDashboard from "./components/employee/EmployeeDashboard";
 import EmployeeRoute from "./components/EmployeeRoute";
 import AdminRoute from "./components/AdminRoute";
-import EditEmployee from "./components/admin/EditEmployee"
-import EmployeeProfile from "./components/employee/EmployeeProfile"
+import EditEmployee from "./components/admin/EditEmployee";
+import EmployeeProfile from "./components/employee/EmployeeProfile";
 import EditProfile from "./components/employee/EditProfile";
 import ChangePassword from "./components/employee/ChangePassword";
 import LeaveManagement from "./components/employee/LeaveManagement";
 import ManageLeave from "./components/admin/ManageLeave";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import React, { Suspense, lazy } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Suspense, lazy } from "react";
 import Loader from "./components/Loader";
 import ForgotPassword from "./components/employee/ForgotPassword";
 
-const Home = lazy(()=>import('./components/Home'));
+const Home = lazy(() => import("./components/Home"));
 
 const App = () => {
   return (
     <>
-    <ToastContainer/>
+      <ToastContainer />
       <Routes>
-        <Route path="/" element={
-          <Suspense fallback={<Loader/>}>
-          <Home/>
-          </Suspense>
-          } />
+        <Route
+          path="/"
+          element={
+            <Suspense fallback={<Loader />}>
+              <Home />
+            </Suspense>
+          }
+        />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/user/register" element={<EmployeeRegister />} />
         <Route path="/user/login" element={<EmployeeLogin />} />
@@ -52,12 +53,10 @@ const App = () => {
         >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="employees" element={<Employees />} />
-          <Route path="departments" element={<Departments />} />
-         
           <Route path="add-employee" element={<AddEmployee />} />
           <Route path="add-department" element={<AddDepartment />} />
           <Route path="edit-employee/:id" element={<EditEmployee />} />
-          <Route path="manage-leave" element={<ManageLeave/>} />
+          <Route path="manage-leave" element={<ManageLeave />} />
         </Route>
         <Route
           path="/user"

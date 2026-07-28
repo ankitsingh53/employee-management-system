@@ -23,27 +23,36 @@ import { GET_DEPARTMENT } from "../../apollo/queries/adminQuery";
 import { toast } from "react-toastify";
 import Loader from "../Loader";
 
-interface FormErrors {
+interface ErrorState {
   department?: string;
+}
+interface DepartmentData {
+  viewDepartment: Array<{
+    id: string;
+    department: string;
+  }>;
 }
 
 const AddDepartment = () => {
   const [formData, setFormData] = useState({
     department: "",
   });
-  const [err, setErr] = useState({});
+  const [err, setErr] = useState<ErrorState>({});
   const [editId, setEditId] = useState<number | null>(null);
   const [popUp, setPopUp] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState(null);
   const [addDepartment] = useMutation(ADD_DEPART);
-  const { data, loading, error, refetch } = useQuery(GET_DEPARTMENT, {
-    fetchPolicy: "cache-and-network",
-  });
+  const { data, loading, error, refetch } = useQuery<DepartmentData>(
+    GET_DEPARTMENT,
+    {
+      fetchPolicy: "cache-and-network",
+    },
+  );
   const [updateMutation] = useMutation(UPDATE_DEPARTMENT);
   const [deleteMutation] = useMutation(DELETE_DEPARTMENT);
 
   const customeValidate = () => {
-    const formErrors: FormErrors = {};
+    const formErrors: ErrorState = {};
     let isValid = true;
     const stringPattern = /^[A-Za-z\s'-]+$/;
 
@@ -84,8 +93,8 @@ const AddDepartment = () => {
         autoClose: 2000,
       });
     } catch (error) {
-      if(error instanceof Error){
-        toast.error(`${error.message}`)
+      if (error instanceof Error) {
+        toast.error(`${error.message}`);
       }
     }
   };

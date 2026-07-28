@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import type { RootState } from "../glolbalStore/store"
+import type { RootState } from "../glolbalStore/store";
 import { Box, CircularProgress } from "@mui/material";
 
 interface Props {
@@ -9,12 +9,13 @@ interface Props {
 
 const AdminRoute = ({ children }: Props) => {
   const { isAuthenticated, loading, role } = useSelector(
-    (state: RootState) => state.auth
+    (state: RootState) => state.auth,
   );
 
   if (loading) {
-    return <>
-    <Box
+    return (
+      <>
+        <Box
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -24,7 +25,8 @@ const AdminRoute = ({ children }: Props) => {
         >
           <CircularProgress />
         </Box>
-    </>;
+      </>
+    );
   }
 
   if (!isAuthenticated) {

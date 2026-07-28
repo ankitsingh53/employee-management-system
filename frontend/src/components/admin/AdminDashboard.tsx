@@ -1,12 +1,6 @@
-import {
-  Paper,
-  Typography,
-  Box,
-  Button,
-  Chip,
-} from "@mui/material";
+import { Paper, Typography, Box, Button, Chip } from "@mui/material";
 import { useQuery } from "@apollo/client/react";
-import { GET_ADMIN } from "../../apollo/queries/adminQuery";
+import { GET_ADMIN, GET_EMPLOYEE } from "../../apollo/queries/adminQuery";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "../../features/auth/authSlice";
 import { useEffect } from "react";
@@ -16,33 +10,60 @@ import PersonIcon from "@mui/icons-material/Person";
 import BusinessIcon from "@mui/icons-material/Business";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import { useNavigate } from "react-router-dom";
-import {
-  GET_ADMIN_DASHBOARD,
-} from "../../apollo/queries/adminQuery";
+import { GET_ADMIN_DASHBOARD } from "../../apollo/queries/adminQuery";
 import Loader from "../Loader";
 
+interface DashboardData {
+  adminDashboard: {
+    totalEmployees: number;
+    activeEmployees: number;
+    totalDepartments: number;
+    pendingLeaves: number;
+  };
+}
+interface AdminDataResponse {
+  getMe?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    departmentId: string;
+    designation: string;
+    salary: number;
+    joiningDate: string;
+    role: "ADMIN" | "EMPLOYEE";
+    status: boolean;
+    department: Array<{
+      id: number;
+      department: string;
+    }>;
+  };
+}
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { data, loading, error } = useQuery(GET_ADMIN);
+  const { data, loading, error } = useQuery<AdminDataResponse>(GET_ADMIN);
   const {
-  data: dashboardData,
-  loading: dashboardLoading,
-  error: dashboardError,
-} = useQuery(GET_ADMIN_DASHBOARD);
+    data: dashboardData,
+    loading: dashboardLoading,
+    error: dashboardError,
+    refetch,
+  } = useQuery<DashboardData>(GET_ADMIN_DASHBOARD);
 
   const user = useSelector((state: RootState) => state.auth.user);
 
   useEffect(() => {
     if (data?.getMe) {
       dispatch(setAuth(data.getMe));
+      refetch();
     }
   }, [data, dispatch]);
 
- if (loading || dashboardLoading) return <Loader/>;
+  if (loading || dashboardLoading) return <Loader />;
 
-if (error || dashboardError) return <h2>Something went wrong.</h2>;
+  if (error || dashboardError) return <h2>Something went wrong.</h2>;
 
   return (
     <Box>
@@ -76,9 +97,7 @@ if (error || dashboardError) return <h2>Something went wrong.</h2>;
             {dashboardData?.adminDashboard.totalEmployees}
           </Typography>
 
-          <Typography color="text.secondary">
-            Total Employees
-          </Typography>
+          <Typography color="text.secondary">Total Employees</Typography>
         </Paper>
 
         <Paper sx={{ p: 3, borderRadius: 2 }}>
@@ -88,9 +107,7 @@ if (error || dashboardError) return <h2>Something went wrong.</h2>;
             {dashboardData?.adminDashboard.activeEmployees}
           </Typography>
 
-          <Typography color="text.secondary">
-            Active Employees
-          </Typography>
+          <Typography color="text.secondary">Active Employees</Typography>
         </Paper>
 
         <Paper sx={{ p: 3, borderRadius: 2 }}>
@@ -100,9 +117,7 @@ if (error || dashboardError) return <h2>Something went wrong.</h2>;
             {dashboardData?.adminDashboard.totalDepartments}
           </Typography>
 
-          <Typography color="text.secondary">
-            Total Departments
-          </Typography>
+          <Typography color="text.secondary">Total Departments</Typography>
         </Paper>
 
         <Paper sx={{ p: 3, borderRadius: 2 }}>
@@ -112,13 +127,9 @@ if (error || dashboardError) return <h2>Something went wrong.</h2>;
             {dashboardData?.adminDashboard.pendingLeaves}
           </Typography>
 
-          <Typography color="text.secondary">
-            Pending Leave Requests
-          </Typography>
+          <Typography color="text.secondary">Pending Leave Requests</Typography>
         </Paper>
       </Box>
-
-      {/* Bottom Section */}
 
       <Box
         sx={{
@@ -130,8 +141,6 @@ if (error || dashboardError) return <h2>Something went wrong.</h2>;
           gap: 3,
         }}
       >
-        {/* Administrator Information */}
-
         <Paper
           sx={{
             flex: 1,
@@ -150,7 +159,6 @@ if (error || dashboardError) return <h2>Something went wrong.</h2>;
           </Typography>
 
           <Box sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}>
-
             <Box
               sx={{
                 display: "flex",
@@ -208,13 +216,8 @@ if (error || dashboardError) return <h2>Something went wrong.</h2>;
                 Status
               </Typography>
 
-              <Chip
-                label="ACTIVE"
-                color="success"
-                size="small"
-              />
+              <Chip label="ACTIVE" color="success" size="small" />
             </Box>
-
           </Box>
         </Paper>
 

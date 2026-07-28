@@ -29,11 +29,37 @@ interface FormError {
   password?: string;
 }
 
+interface LoginEmployeeResponse {
+  loginEmployee: {
+    message?: string;
+  };
+}
+interface GetUserResponse {
+  getUser: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    departmentId: string;
+    designation: string;
+    salary: number;
+    joiningDate: string;
+    role: "ADMIN" | "EMPLOYEE";
+    status: boolean;
+    department: Array<{
+      id: number;
+      department: string;
+    }>;
+  };
+}
+
 const EmployeeLogin = () => {
   const navigate = useNavigate();
   const client = useApolloClient();
   const dispatch = useDispatch();
-  const [loginEmployee, { loading }] = useMutation(LOGIN_EMPLOYEE);
+  const [loginEmployee, { loading }] =
+    useMutation<LoginEmployeeResponse>(LOGIN_EMPLOYEE);
   const [showCurrent, setShowCurrent] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     email: "",
@@ -80,11 +106,11 @@ const EmployeeLogin = () => {
         },
       });
       if (data?.loginEmployee?.message) {
-        const userData = await client.query({
+        const userData = await client.query<GetUserResponse>({
           query: GET_USER,
           fetchPolicy: "network-only",
         });
-        dispatch(setAuth(userData.data.getUser));
+        dispatch(setAuth(userData.data!.getUser));
         navigate("/user/dashboard");
         toast.success("Login Successfully", {
           autoClose: 2000,
@@ -229,28 +255,28 @@ const EmployeeLogin = () => {
             )}
 
             <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              mt: 2,
-            }}
-          >
-            <Link
-              component="button"
-              underline="hover"
-              onClick={() => navigate("/user/register")}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mt: 2,
+              }}
             >
-              Register
-            </Link>
+              <Link
+                component="button"
+                underline="hover"
+                onClick={() => navigate("/user/register")}
+              >
+                Register
+              </Link>
 
-            <Link
-              component="button"
-              underline="hover"
-              onClick={() => navigate("/user/forgot-password")}
-            >
-              Forgot Password?
-            </Link>
-          </Box>
+              <Link
+                component="button"
+                underline="hover"
+                onClick={() => navigate("/user/forgot-password")}
+              >
+                Forgot Password?
+              </Link>
+            </Box>
 
             <Button
               fullWidth

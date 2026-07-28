@@ -4,7 +4,7 @@ export interface Department {
 }
 
 export interface User {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -13,13 +13,13 @@ export interface User {
   joiningDate: string | null;
   salary: number | null;
   role: "ADMIN" | "EMPLOYEE";
-  status: string;
+  status: boolean;
   department: Department[] | null;
 }
 
 export interface AuthState {
   user: User | null;
-  role: 'ADMIN' | 'EMPLOYEE' | null;
+  role: "ADMIN" | "EMPLOYEE" | null;
   isAuthenticated: boolean;
   loading: boolean;
 }

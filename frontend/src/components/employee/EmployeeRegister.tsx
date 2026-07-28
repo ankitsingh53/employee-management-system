@@ -92,28 +92,28 @@ const EmployeeRegister = () => {
     const valid = customeValidate();
     if (!valid) return;
     try {
-      const {data} =  await registerEmployee({
+      const { data } = await registerEmployee({
         variables: {
           input: formData,
         },
       });
-      
-      if(data){
-        navigate("/user/login")
+
+      if (data) {
+        navigate("/user/login");
         toast.success("Registered Successfully", {
           autoClose: 2000,
-        })
+        });
       }
     } catch (err) {
-      if (err instanceof Error){
-        toast.error(`${err.message}`,{
+      if (err instanceof Error) {
+        toast.error(`${err.message}`, {
           autoClose: 2000,
-        })
-      } 
+        });
+      }
     }
   };
 
-  if(loading) return <Loader/>
+  if (loading) return <Loader />;
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -170,7 +170,7 @@ const EmployeeRegister = () => {
             maxWidth: 450,
           }}
         >
-          <BackButton path="/"/>
+          <BackButton path="/" />
           <Box
             component="form"
             noValidate
@@ -239,18 +239,18 @@ const EmployeeRegister = () => {
               value={formData.password}
               autoComplete="on"
               slotProps={{
-                input:{
-                    endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowCurrent(!showCurrent)}
-                      edge="end"
-                    >
-                      {showCurrent ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                }
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowCurrent(!showCurrent)}
+                        edge="end"
+                      >
+                        {showCurrent ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
             {errors.password && (
@@ -279,10 +279,7 @@ const EmployeeRegister = () => {
             }}
           >
             Already have an account?{" "}
-            <Link
-              component="button"
-              onClick={() => navigate("/user/login")}
-            >
+            <Link component="button" onClick={() => navigate("/user/login")}>
               Login
             </Link>
           </Typography>

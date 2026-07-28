@@ -24,7 +24,8 @@ const Home = () => {
           Management System
         </Typography>
         <Typography sx={{ mt: 3, color: "#D1D5DB", maxWidth: 450 }}>
-          Streamline your workforce operations, track profile, manage your activity, and empower your team securely.
+          Streamline your workforce operations, track profile, manage your
+          activity, and empower your team securely.
         </Typography>
       </Box>
       <Box

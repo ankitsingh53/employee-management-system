@@ -11,6 +11,12 @@ interface UpdateProfileInput {
     phoneNumber: string;
 }
 
+interface ChangePasswordInput {
+  currentPassword: string;
+  newPassword: string;
+}
+
+
 export const getProfile = async (id:number)=>{
     const data = await profileRepo.findOne({
         where:{
@@ -49,7 +55,7 @@ export const updateProfile = async (id:number, data:UpdateProfileInput)=>{
     return currentUser
 } 
 
-export const changePassword = async (id:number,data:any)=>{
+export const changePassword = async (id:number,data:ChangePasswordInput)=>{
         console.log("Service", data)
         const getUser = await profileRepo.findOne({
         where:{

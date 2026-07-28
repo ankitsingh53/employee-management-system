@@ -102,13 +102,13 @@ const ChangePassword = () => {
         },
       });
 
-      if(data){
-      navigate("/user/profile");
-      toast.success("Password changed successfully")
+      if (data) {
+        navigate("/user/profile");
+        toast.success("Password changed successfully");
       }
     } catch (error) {
-      if(error instanceof Error){
-        toast.error(`${error.message}`)
+      if (error instanceof Error) {
+        toast.error(`${error.message}`);
       }
     }
   };
@@ -145,18 +145,18 @@ const ChangePassword = () => {
               onChange={handleChange}
               fullWidth
               slotProps={{
-                input:{
-                    endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowCurrent(!showCurrent)}
-                      edge="end"
-                    >
-                      {showCurrent ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                }
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowCurrent(!showCurrent)}
+                        edge="end"
+                      >
+                        {showCurrent ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
 
@@ -175,15 +175,18 @@ const ChangePassword = () => {
               onChange={handleChange}
               fullWidth
               slotProps={{
-                input:{
-                    endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowNew(!showNew)} edge="end">
-                      {showNew ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                }
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowNew(!showNew)}
+                        edge="end"
+                      >
+                        {showNew ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
 
@@ -202,18 +205,18 @@ const ChangePassword = () => {
               onChange={handleChange}
               fullWidth
               slotProps={{
-                input:{
-                    endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowConfirm(!showConfirm)}
-                      edge="end"
-                    >
-                      {showConfirm ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                }
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowConfirm(!showConfirm)}
+                        edge="end"
+                      >
+                        {showConfirm ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
 

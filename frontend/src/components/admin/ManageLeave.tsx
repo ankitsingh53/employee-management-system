@@ -12,15 +12,21 @@ import {
   Chip,
 } from "@mui/material";
 
-
 import { ALL_LEAVE_REQUESTS } from "../../apollo/queries/adminQuery";
 import { UPDATE_LEAVE_STATUS } from "../../apollo/mutations/adminMutation";
 import Loader from "../Loader";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { toast } from "react-toastify";
 
+interface leaveRequestsData {
+  allLeaveRequests: Array<{
+    id: string;
+  }>;
+}
+
 const ManageLeave = () => {
-  const { data, loading, refetch } = useQuery(ALL_LEAVE_REQUESTS);
+  const { data, loading, refetch } =
+    useQuery<leaveRequestsData>(ALL_LEAVE_REQUESTS);
 
   const [updateLeaveStatus, { loading: updating }] =
     useMutation(UPDATE_LEAVE_STATUS);
@@ -35,60 +41,63 @@ const ManageLeave = () => {
           },
         },
       });
-
-      toast.success("Leave status updated successfully.",{
+      toast.success("Leave status updated successfully.", {
         autoClose: 2000,
-      })
-
+      });
       refetch();
     } catch (error) {
-      console.log(error);
+      if(error instanceof Error){
+        toast.error(`${error.message}`)
+      }
     }
   };
 
-  console.log(data)
+  refetch();
 
   if (loading) {
     return <Loader />;
   }
-  if(updating){
-    return <Loader/>
+  if (updating) {
+    return <Loader />;
   }
   if (!data?.allLeaveRequests?.length) {
+    return (
+      <>
+        <Box sx={{ marginBottom: "30px" }}>
+          <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+            Leave Requests
+          </Typography>
+
+          <Typography color="text.secondary">
+            Manage employee leave requests
+          </Typography>
+        </Box>
+
+        <Paper
+          sx={{
+            p: 4,
+            textAlign: "center",
+            borderRadius: 2,
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", marginBottom: "10px" }}
+          >
+            No Leave Requests
+          </Typography>
+
+          <Typography color="text.secondary">
+            There are no leave requests available.
+          </Typography>
+        </Paper>
+      </>
+    );
+  }
   return (
     <>
-      <Box sx={{marginBottom: '30px'}}>
-        <Typography variant="h4" sx={{fontWeight:"bold"}}>
-          Leave Requests
-        </Typography>
-
-        <Typography color="text.secondary">
-          Manage employee leave requests
-        </Typography>
-      </Box>
-
-      <Paper
-        sx={{
-          p: 4,
-          textAlign: "center",
-          borderRadius: 2,
-        }}
-      >
-        <Typography variant="h6" sx={{fontWeight:"bold", marginBottom: '10px'}}>
-          No Leave Requests
-        </Typography>
-
-        <Typography color="text.secondary">
-          There are no leave requests available.
-        </Typography>
-      </Paper>
-    </>
-  );
-}
-  return (
-    <>
-      <Box sx={{marginBottom:'30px'}}>
-        <Typography variant="h4" sx={{fontWeight:"bold"}} >
+      <Box sx={{ marginBottom: "30px" }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
           Leave Requests
         </Typography>
 
@@ -100,15 +109,15 @@ const ManageLeave = () => {
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow sx={{fontWeight:'500px'}}>
-              <TableCell>Employee</TableCell>
-              <TableCell>Department</TableCell>
-              <TableCell>Leave Type</TableCell>
-              <TableCell>Start Date</TableCell>
-              <TableCell>End Date</TableCell>
-              <TableCell>Reason</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Action</TableCell>
+            <TableRow sx={{ fontWeight: "500px" }}>
+              <TableCell sx={{ fontWeight: "bold" }}>Employee</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Department</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Leave Type</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Start Date</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>End Date</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Reason</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Action</TableCell>
             </TableRow>
           </TableHead>
 
@@ -154,7 +163,7 @@ const ManageLeave = () => {
 
                 <TableCell>
                   {leave.status === "PENDING" ? (
-                    <Box sx={{ display:"flex", gap:'10px'}}>
+                    <Box sx={{ display: "flex", gap: "10px" }}>
                       <Button
                         variant="contained"
                         color="success"

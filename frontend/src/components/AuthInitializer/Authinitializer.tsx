@@ -8,6 +8,45 @@ import { GET_USER } from "../../apollo/queries/employeeQuery";
 interface Props {
   children: React.ReactNode;
 }
+interface UserData {
+  getMe: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    departmentId: string;
+    designation: string;
+    salary: number;
+    joiningDate: string;
+    role: "ADMIN" | "EMPLOYEE";
+    status: boolean;
+    department: Array<{
+      id: number;
+      department: string;
+    }>;
+  };
+}
+
+interface UserData {
+  getUser: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    departmentId: string;
+    designation: string;
+    salary: number;
+    joiningDate: string;
+    role: "ADMIN" | "EMPLOYEE";
+    status: boolean;
+    department: Array<{
+      id: number;
+      department: string;
+    }>;
+  };
+}
 
 const Authinitializer = ({ children }: Props) => {
   const dispatch = useDispatch();
@@ -16,7 +55,7 @@ const Authinitializer = ({ children }: Props) => {
     const initialize = async () => {
       try {
         dispatch(setLoading(true));
-        const { data } = await client.query({
+        const { data } = await client.query<UserData>({
           query: GET_ADMIN,
           fetchPolicy: "network-only",
         });
@@ -27,7 +66,7 @@ const Authinitializer = ({ children }: Props) => {
         // console.log(data.getMe)
       } catch {
         try {
-          const { data } = await client.query({
+          const { data } = await client.query<UserData>({
             query: GET_USER,
             fetchPolicy: "network-only",
           });

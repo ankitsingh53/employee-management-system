@@ -18,11 +18,17 @@ import { LOGOUT_EMPLOYEE } from "../apollo/mutations/employeeMutation";
 import { toast } from "react-toastify";
 
 interface LogoutData {
-  data: {
-    logoutAdmin:{
-      success:string;
-    }
-  }
+  logoutAdmin: {
+    success: string;
+    message?: string;
+  };
+}
+
+interface LogoutEmployeeData {
+  logoutEmployee: {
+    success: string;
+    message?: string;
+  };
 }
 
 const NavBar = () => {
@@ -30,9 +36,9 @@ const NavBar = () => {
   const client = useApolloClient();
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
-  const [logoutAdmin] = useMutation(LOGOUT_ADMIN);
+  const [logoutAdmin] = useMutation<LogoutData>(LOGOUT_ADMIN);
 
-  const [logoutEmployee] = useMutation(LOGOUT_EMPLOYEE);
+  const [logoutEmployee] = useMutation<LogoutEmployeeData>(LOGOUT_EMPLOYEE);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -47,36 +53,36 @@ const NavBar = () => {
   };
 
   const handleLogout = async () => {
-  try {
-    if (user?.role === "ADMIN") {
-      const {data} = await logoutAdmin();
+    try {
+      if (user?.role === "ADMIN") {
+        const { data } = await logoutAdmin();
 
-      if (data?.logoutAdmin?.success) {
-        dispatch(logout());
-        await client.clearStore();
-        handleClose();
-        navigate("/admin/login");
-        toast.success("Logout Successfully",{
-          "autoClose":2000,
-        })
-      }
-    } else if (user?.role === "EMPLOYEE") {
-      const { data } = await logoutEmployee();
+        if (data?.logoutAdmin?.success) {
+          dispatch(logout());
+          await client.clearStore();
+          handleClose();
+          navigate("/admin/login");
+          toast.success("Logout Successfully", {
+            autoClose: 2000,
+          });
+        }
+      } else if (user?.role === "EMPLOYEE") {
+        const { data } = await logoutEmployee();
 
-      if (data?.logoutEmployee?.success) {
-        dispatch(logout());
-        await client.clearStore();
-        handleClose();
-        navigate("/user/login");
-        toast.success("Logout Successfully",{
-          "autoClose":2000,
-        })
+        if (data?.logoutEmployee?.success) {
+          dispatch(logout());
+          await client.clearStore();
+          handleClose();
+          navigate("/user/login");
+          toast.success("Logout Successfully", {
+            autoClose: 2000,
+          });
+        }
       }
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
-  }
-};
+  };
 
   return (
     <AppBar
@@ -92,18 +98,16 @@ const NavBar = () => {
           padding: "15px",
         }}
       >
-        <Typography 
-        variant="h6" 
-        sx={{ fontWeight: "500", letterSpacing: 0.5 }}
-        >
-          <Link 
-          style={{
-            color:'white',
-            textDecoration: 'none'
-          }}
-          to={user?.role ==="ADMIN" ? "/admin/dashboard" : "/user/dashboard"}
-          >Employee Management System</Link>
-          
+        <Typography variant="h6" sx={{ fontWeight: "500", letterSpacing: 0.5 }}>
+          <Link
+            style={{
+              color: "white",
+              textDecoration: "none",
+            }}
+            to={user?.role === "ADMIN" ? "/admin/dashboard" : "/user/dashboard"}
+          >
+            Employee Management System
+          </Link>
         </Typography>
 
         <Box
@@ -128,11 +132,7 @@ const NavBar = () => {
         </Box>
 
         <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-          <MenuItem
-            onClick={handleLogout}
-          >
-            Logout
-          </MenuItem>
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

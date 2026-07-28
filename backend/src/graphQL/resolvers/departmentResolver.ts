@@ -5,16 +5,37 @@ import {
 } from "../../services/departmentService.js";
 import { changeDepartment } from "../../services/departmentService.js";
 import { removeDepartment } from "../../services/departmentService.js";
+import type { GraphQLContext } from "../../types/context.js";
+
+
+interface EmptyArgs {}
+
+interface DeleteDepartmentArgs {
+  id: number;
+}
+
+interface DepartmentInput {
+  input: {
+    department: string;
+  };
+}
+
+interface UpdateDepartmentArgs {
+  input: {
+    id: number;
+    department: string;
+  };
+}
 
 export const departmentResolver = {
   Query: {
-    viewDepartment: async (_: any, args: any, context: any) => {
+    viewDepartment: async (_: unknown, args: EmptyArgs, context: GraphQLContext) => {
       requireAdmin(context);
       return await getAllDepartment();
     },
   },
   Mutation: {
-    addDepartment: async (parent: any, args: any, context: any) => {
+    addDepartment: async (_: unknown, args: DepartmentInput, context: GraphQLContext) => {
       requireAdmin(context)
       const { department } = args.input;
       const stringPattern = /^[A-Za-z\s'\-\/\\ ]+$/;
@@ -27,7 +48,7 @@ export const departmentResolver = {
       return await createDepartment(department);
     },
 
-    updateDepartment: async (parent: any, args: any, context: any) => {
+    updateDepartment: async (_: unknown, args: UpdateDepartmentArgs, context: GraphQLContext) => {
       requireAdmin(context)
       const { id, ...data } = args.input;
       const stringPattern = /^[A-Za-z\s'\-\/\\ ]+$/;
@@ -40,7 +61,7 @@ export const departmentResolver = {
       return await changeDepartment(id, data);
     },
 
-    deleteDepartment: async (parent: any, args: any, context: any) => {
+    deleteDepartment: async (_: unknown, args: DeleteDepartmentArgs, context: GraphQLContext) => {
       requireAdmin(context)
       const id = args.id;
       return await removeDepartment(id);

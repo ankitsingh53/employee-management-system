@@ -17,15 +17,13 @@ export const GET_EMPLOYEE = gql`
   $page: Int!, 
   $limit: Int!, 
   $search: String,
-  $status: Boolean,
-  $sortBy: String
+  $searchBy:String
   ) {
     getEmployee(
     page: $page, 
     limit: $limit, 
     search: $search
-    status: $status,
-    sortBy: $sortBy,
+    searchBy: $searchBy
     ) {
        totalCount 
        employees {

@@ -8,9 +8,9 @@ import type { RootState } from "../glolbalStore/store";
 import Loader from "./Loader";
 
 const DashboardLayout = () => {
-  const user = useSelector((state: RootState)=>state.auth)
-  if(user.loading){
-    return <Loader/>
+  const user = useSelector((state: RootState) => state.auth);
+  if (user.loading) {
+    return <Loader />;
   }
   return (
     <>

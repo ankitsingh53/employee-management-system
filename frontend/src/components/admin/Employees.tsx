@@ -17,24 +17,50 @@ import {
   Chip,
   Stack,
 } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
-import { GET_EMPLOYEE } from "../../apollo/queries/adminQuery";
+import { GET_DEPARTMENT, GET_EMPLOYEE } from "../../apollo/queries/adminQuery";
 import { DELETE_EMP } from "../../apollo/mutations/adminMutation";
 import { toast } from "react-toastify";
 import Loader from "../Loader";
 import { useState, useEffect } from "react";
 import TablePagination from "@mui/material/TablePagination";
 
+interface DepartmentData {
+  viewDepartment: Array<{
+    id: string;
+    department: string;
+  }>;
+}
+
+interface EmployeeDataResponse {
+  getEmployee?: {
+    employees: Array<{
+      id: number;
+      status: boolean | true;
+      firstName: string;
+      lastName: string;
+      email: string;
+      department: Array<{
+        department: string;
+      }>;
+      phoneNumber: string;
+      designation: string;
+      salary: string;
+      joiningDate: string;
+    }>;
+    totalCount: number;
+  };
+}
+
 const Employees = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
-  const [message, setMessage] = useState<boolean>(false)
+  const [message, setMessage] = useState<boolean>(false);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [status, setStatus] = useState<boolean | undefined>(undefined);
-  const [sortBy, setSortBy] = useState("id");
+  const [searchBy, setSearchBy] = useState("firstName");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -44,18 +70,22 @@ const Employees = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const { data, loading, error } = useQuery(GET_EMPLOYEE, {
-    variables: {
-      page: page + 1,
-      limit: rowsPerPage,
-      search: debouncedSearch,
-      status,
-      sortBy,
+  const { data, loading, error } = useQuery<EmployeeDataResponse>(
+    GET_EMPLOYEE,
+    {
+      variables: {
+        page: page + 1,
+        limit: rowsPerPage,
+        search: debouncedSearch,
+        searchBy,
+      },
     },
-  });
-  const handleChangePage = (event: unknown, newPage: number) => {
+  );
+  const { data: departmentData } = useQuery<DepartmentData>(GET_DEPARTMENT);
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
+  console.log(departmentData);
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -77,19 +107,21 @@ const Employees = () => {
             variables: {
               page: page + 1,
               limit: rowsPerPage,
+              search: debouncedSearch,
+              searchBy,
             },
           },
         ],
         awaitRefetchQueries: true,
       });
-      if(!message){
+      if (!message) {
         toast.success(" Deactivated Successfully", {
-        autoClose: 2000,
-      });
-      } else{
+          autoClose: 2000,
+        });
+      } else {
         toast.success(" Activated Successfully", {
-        autoClose: 2000,
-      });
+          autoClose: 2000,
+        });
       }
     } catch (error) {
       toast.error(`${error}`);
@@ -100,7 +132,6 @@ const Employees = () => {
   if (error) return <h2>`Error: ${error.message}`</h2>;
   return (
     <Box sx={{ width: "100%" }}>
-
       <Box
         sx={{
           display: "flex",
@@ -139,57 +170,73 @@ const Employees = () => {
             gap: 2,
           }}
         >
-          <TextField
-            label="Search Employee"
-            fullWidth
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(0);
-            }}
-          />
-
-          <FormControl sx={{ width: 180 }}>
-            <InputLabel>Sort By</InputLabel>
-
-            <Select
-              value={sortBy}
-              label="Sort By"
+          {searchBy === "joiningDate" ? (
+            <TextField
+              type="date"
+              fullWidth
+              value={search}
               onChange={(e) => {
-                setSortBy(e.target.value);
+                setSearch(e.target.value);
+                setPage(0);
               }}
-            >
-              <MenuItem value="id">ID</MenuItem>
-              <MenuItem value="firstName">Name</MenuItem>
-              <MenuItem value="salary">Salary</MenuItem>
-              <MenuItem value="joiningDate">Joining Date</MenuItem>
-            </Select>
-          </FormControl>
+              slotProps={{
+                inputLabel: { shrink: true },
+              }}
+            />
+          ) : searchBy === "department" ? (
+            <FormControl fullWidth>
+              <InputLabel>Department</InputLabel>
 
-          <FormControl sx={{ width: 180 }}>
-            <InputLabel>Status</InputLabel>
+              <Select
+                value={search}
+                label="Department"
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(0);
+                }}
+              >
+                {departmentData?.viewDepartment?.map((dept) => (
+                  <MenuItem key={dept.id} value={dept.department}>
+                    {dept.department}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ) : (
+            <TextField
+              fullWidth
+              label="Search"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(0);
+              }}
+            />
+          )}
+
+          {/* Dropdown */}
+          <FormControl sx={{ width: "40%" }}>
+            <InputLabel>Search By</InputLabel>
 
             <Select
-              label="Status"
-              defaultValue=""
-              value={status === undefined ? "" : status.toString()}
+              value={searchBy}
+              label="Search By"
               onChange={(e) => {
-                const value = e.target.value;
-
-                if (value === "") {
-                  setStatus(undefined);
-                } else {
-                  setStatus(value === "true");
-                }
-
+                setSearchBy(e.target.value);
+                setSearch("");
+                setDebouncedSearch("");
                 setPage(0);
               }}
             >
-              <MenuItem value="">All</MenuItem>
+              <MenuItem value="firstName">Name</MenuItem>
 
-              <MenuItem value="true">Active</MenuItem>
+              <MenuItem value="email">Email</MenuItem>
 
-              <MenuItem value="false">Inactive</MenuItem>
+              <MenuItem value="department">Department</MenuItem>
+
+              <MenuItem value="designation">Designation</MenuItem>
+
+              <MenuItem value="joiningDate">Joining Date</MenuItem>
             </Select>
           </FormControl>
         </Box>
@@ -204,8 +251,6 @@ const Employees = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}>ID</TableCell>
-
               <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
 
               <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
@@ -241,13 +286,7 @@ const Employees = () => {
                 <TableCell
                   sx={{ opacity: employee.status === false ? 0.5 : 1 }}
                 >
-                  {employee.id}
-                </TableCell>
-
-                <TableCell
-                  sx={{ opacity: employee.status === false ? 0.5 : 1 }}
-                >
-                  {employee.firstName}
+                  {`${employee.firstName} ${employee.lastName}`}
                 </TableCell>
 
                 <TableCell
@@ -297,7 +336,7 @@ const Employees = () => {
 
                 <TableCell align="center">
                   {employee.status === true ? (
-                      <Stack spacing={0.2}>
+                    <Stack spacing={0.2}>
                       <Button
                         variant="outlined"
                         size="small"
@@ -308,24 +347,25 @@ const Employees = () => {
                         Edit
                       </Button>
                       <Button
-                       variant="outlined" startIcon={<DeleteIcon />}
+                        variant="outlined"
+                        startIcon={<DeleteIcon />}
                         color={employee.status === true ? "error" : "success"}
                         size="small"
                         onClick={() => {
-                          handleDelete(employee.id)
-                          setMessage(true)
+                          handleDelete(employee.id);
+                          setMessage(true);
                         }}
                       >
                         {employee.status ? "" : "Activate"}
                       </Button>
-                      </Stack>
+                    </Stack>
                   ) : (
                     <Button
                       variant="contained"
-                      color={employee.status === true ? "error" : "success"}
+                      color={employee.status ? "error" : "success"}
                       size="small"
                       onClick={() => {
-                        handleDelete(employee.id)
+                        handleDelete(employee.id);
                         setMessage(false);
                       }}
                     >
@@ -339,7 +379,7 @@ const Employees = () => {
         </Table>
         <TablePagination
           component="div"
-          count={data?.getEmployee.totalCount ?? 0}
+          count={data?.getEmployee?.totalCount ?? 0}
           page={page}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}

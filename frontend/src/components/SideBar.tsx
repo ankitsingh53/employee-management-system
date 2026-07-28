@@ -36,7 +36,7 @@ const adminMenu = [
   {
     text: "Leave Requests",
     icon: <EventNoteIcon />,
-    path:"/admin/manage-leave"
+    path: "/admin/manage-leave",
   },
 ];
 
@@ -58,17 +58,16 @@ const employeeMenu = [
   },
 ];
 
-
 const SideBar = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
-const menuItems =
-  user?.role === "ADMIN"
-    ? adminMenu
-    : user?.role === "EMPLOYEE"
-    ? employeeMenu
-    : [];
-    
+  const menuItems =
+    user?.role === "ADMIN"
+      ? adminMenu
+      : user?.role === "EMPLOYEE"
+        ? employeeMenu
+        : [];
+
   return (
     <Box
       sx={{
@@ -79,7 +78,7 @@ const menuItems =
         flexShrink: 0,
       }}
     >
-      <List sx={{ p: 2, marginTop: '30px' }}>
+      <List sx={{ p: 2, marginTop: "30px" }}>
         {menuItems.map((item, index) => (
           <Box key={item.text}>
             <ListItemButton

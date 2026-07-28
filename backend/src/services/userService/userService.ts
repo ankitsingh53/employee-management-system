@@ -46,6 +46,9 @@ export const getMe = async (id: number) => {
       department:true,
      }
   });
+  if (!data) {
+  throw new Error("Employee not found");
+}
   return data;
 };
 

@@ -3,23 +3,41 @@ import { authAdmin } from "../../services/admin/adminService.js";
 import { generateToken } from "../../utils/jwt.js";
 import { requireAdmin, requireAuth } from "../../middleware/authorization.js";
 import { getAdminDashboard } from "../../services/admin/adminService.js";
+import type { GraphQLContext } from "../../types/context.js";
+
+interface LoginAdminArgs {
+  input: {
+    email: string;
+    password: string;
+  };
+}
+
+interface EmptyArgs {}
 
 export const adminResolvers = {
   Query: {
-    getMe: async (parent: any, args: any, context: any) => {
-      const user = requireAdmin(context)
+    getMe: async (_: unknown, args: EmptyArgs, context: GraphQLContext) => {
+      const user = requireAdmin(context);
       const adminData = await getAdmin(user.id);
       return adminData;
     },
-    adminDashboard: async (_: any, __: any, context: any) => {
-  requireAdmin(context);
+    adminDashboard: async (
+      _: unknown,
+      args: EmptyArgs,
+      context: GraphQLContext,
+    ) => {
+      requireAdmin(context);
 
-  return await getAdminDashboard();
-},
+      return await getAdminDashboard();
+    },
   },
 
   Mutation: {
-    loginAdmin: async (parent: any, args: any, context: any) => {
+    loginAdmin: async (
+      _: unknown,
+      args: LoginAdminArgs,
+      context: GraphQLContext,
+    ) => {
       const { email, password } = args.input;
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
       if (!email.trim()) {
@@ -52,7 +70,7 @@ export const adminResolvers = {
         context.res.cookie("token", token, {
           httpOnly: true,
           secure: true,
-          sameSite: "Strict",
+          sameSite: "strict",
         });
         return {
           token,
@@ -66,11 +84,15 @@ export const adminResolvers = {
         }
       }
     },
-    logoutAdmin: async (parent: any, args: any, context: any) => {
+    logoutAdmin: async (
+      _: unknown,
+      args: EmptyArgs,
+      context: GraphQLContext,
+    ) => {
       context.res.clearCookie("token", {
         httpOnly: true,
         secure: true,
-        sameSite: "Strict",
+        sameSite: "strict",
       });
       return {
         success: true,

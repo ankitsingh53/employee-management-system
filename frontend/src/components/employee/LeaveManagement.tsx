@@ -23,6 +23,24 @@ import {
 import { toast } from "react-toastify";
 import Loader from "../Loader";
 
+interface CancelLeaveResponse {
+  cancelLeave: {
+    message?: string;
+  };
+}
+
+interface UserLeaves {
+  myLeaves: Array<{
+    leave: {
+      id: string;
+      leaveType: string;
+      startDate: string;
+      endDate: string;
+      status: string;
+    };
+  }>;
+}
+
 const LeaveManagement = () => {
   const [formData, setFormData] = useState({
     leaveType: "",
@@ -37,10 +55,14 @@ const LeaveManagement = () => {
     endDate: "",
     reason: "",
   });
-  const { data, loading: queryLoading, refetch } = useQuery(MY_LEAVES);
+  const {
+    data,
+    loading: queryLoading,
+    refetch,
+  } = useQuery<UserLeaves>(MY_LEAVES);
 
-  const [applyLeave, { loading }] = useMutation(APPLY_LEAVE);
-  const [cancelLeave] = useMutation(CANCEL_LEAVE);
+  const [applyLeave, { loading }] = useMutation<UserLeaves>(APPLY_LEAVE);
+  const [cancelLeave] = useMutation<CancelLeaveResponse>(CANCEL_LEAVE);
 
   const handleChange = (e: any) => {
     setFormData({

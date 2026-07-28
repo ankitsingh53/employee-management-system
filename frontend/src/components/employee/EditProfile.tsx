@@ -6,13 +6,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { UPDATE_PROFILE } from "../../apollo/mutations/employeeMutation";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "../../features/auth/authSlice";
-import type { RootState } from "@reduxjs/toolkit/query";
+import type { RootState } from "../../glolbalStore/store";
 import { toast } from "react-toastify";
 
 interface GetFormData {
@@ -27,8 +27,27 @@ interface FormErrors {
   email?: string;
   phoneNumber?: string;
 }
+interface UserData {
+  updateProfile: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    departmentId: string;
+    designation: string;
+    salary: number;
+    joiningDate: string;
+    role: "ADMIN" | "EMPLOYEE";
+    status: boolean;
+    department: Array<{
+      id: number;
+      department: string;
+    }>;
+  };
+}
 const EditProfile = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState<GetFormData>({
@@ -38,26 +57,26 @@ const EditProfile = () => {
     phoneNumber: "",
   });
 
-  const user = useSelector((state: RootState)=> state.auth.user);
-  const [updateProfile] = useMutation(UPDATE_PROFILE);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const [updateProfile] = useMutation<UserData>(UPDATE_PROFILE);
 
   useEffect(() => {
-  if (!user) return ;
+    if (!user) return;
     setFormData({
-      firstName: user.firstName,
+      firstName: user.firstName ?? "",
       lastName: user.lastName,
       email: user.email,
-      phoneNumber: user.phoneNumber
+      phoneNumber: user.phoneNumber ?? "",
     });
-}, [user]);
+  }, [user]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>):void => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const customeValidate = () => {
-    const formErrors:FormErrors = {};
+    const formErrors: FormErrors = {};
     let isValid = true;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
     const stringPattern = /^[A-Za-z\s'-]+$/;
@@ -100,7 +119,7 @@ const EditProfile = () => {
     const valid = customeValidate();
     if (!valid) return;
     try {
-      const {data} = await updateProfile({
+      const { data } = await updateProfile({
         variables: {
           input: {
             firstName: formData.firstName,
@@ -110,21 +129,20 @@ const EditProfile = () => {
           },
         },
       });
-      if(data.updateProfile){
-      dispatch(setAuth(data.updateProfile));
+      if (data?.updateProfile) {
+        dispatch(setAuth(data?.updateProfile));
       }
-      navigate("/user/profile")
-      toast.success("Updated Successfully",{
-        "autoClose": 2000,
-      })
+      navigate("/user/profile");
+      toast.success("Updated Successfully", {
+        autoClose: 2000,
+      });
     } catch (error) {
       if (error instanceof Error) {
-        toast.error(`${error.message}`)
+        toast.error(`${error.message}`);
       }
     }
-
   };
-  
+
   return (
     <Box>
       <Box sx={{ mb: 3 }}>
@@ -132,9 +150,7 @@ const EditProfile = () => {
           Edit Profile
         </Typography>
 
-        <Typography color="text.secondary">
-          Update your details:
-        </Typography>
+        <Typography color="text.secondary">Update your details:</Typography>
       </Box>
 
       <Box
@@ -255,9 +271,3 @@ const EditProfile = () => {
 };
 
 export default EditProfile;
-
-
-
-
-
-

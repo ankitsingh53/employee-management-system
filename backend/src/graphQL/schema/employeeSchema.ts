@@ -29,8 +29,7 @@ export const employeeSchema = `#graphql
     page: Int!, 
     limit: Int!, 
     search: String,
-    status: Boolean,
-    sortBy: String
+    searchBy: String
     ): EmployeePagination!
     getEmployeeById(id: ID!): Employee!
   }

@@ -3,10 +3,23 @@ import { Leave } from "../entities/leaveEntity.js";
 import { Employee } from "../entities/employee.entity.js";
 import { sendLeaveStatusEmail } from "../utils/email.js";
 
+export interface LeaveInput {
+  leaveType: string;
+  startDate: string;
+  endDate: string;
+  reason: string;
+}
+
+export interface UpdateLeaveStatusInput {
+  id: number;
+  status: string;
+}
+
 const leaveRepo = AppDataSource.getRepository(Leave);
 const employeeRepo = AppDataSource.getRepository(Employee);
 
-export const applyLeave = async (userId: number, data: any) => {
+export const applyLeave = async ( userId: number,
+  data: LeaveInput) => {
   const employee = await employeeRepo.findOne({
     where: {
       id: userId,
@@ -52,10 +65,14 @@ export const allLeaveRequests = async () => {
   const data =  await leaveRepo.find({
     relations: {
       employee: {
-        department:true,
+        department:true, 
       }
     },
-
+    where: {
+      employee:{
+        status:true
+      }
+    },
     order: {
       createdAt: "DESC",
     },
@@ -66,7 +83,7 @@ export const allLeaveRequests = async () => {
   return data
 };
 
-export const updateLeaveStatus = async (data: any) => {
+export const updateLeaveStatus = async (data: UpdateLeaveStatusInput) => {
   const leave = await leaveRepo.findOne({
     where: {
       id: Number(data.id),

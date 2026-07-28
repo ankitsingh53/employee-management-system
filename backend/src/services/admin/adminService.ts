@@ -35,9 +35,13 @@ const activeEmployees = await employeeRepo.count({
   },
 });
 const totalDepartments = await departmentRepo.count();
+
 const pendingLeaves = await leaveRepo.count({
   where: {
     status: "PENDING",
+    employee:{
+      status:true,
+    }
   },
 });
 

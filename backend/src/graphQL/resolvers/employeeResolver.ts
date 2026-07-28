@@ -4,15 +4,36 @@ import { getAllEmployee } from "../../services/employee/employeeService.js";
 import { updateEmployee } from "../../services/employee/employeeService.js";
 import { deleteEmployee } from "../../services/employee/employeeService.js";
 import { employeeByID } from "../../services/employee/employeeService.js";
+import type { GraphQLContext } from "../../types/context.js";
+import type {
+  EmployeeInput,
+  UpdateEmployeeInput,
+  GetEmployeeArgs,
+  EmployeeIdArgs,
+} from "../types/employee.js";
+
+interface CreateEmployeeArgs {
+  input: EmployeeInput;
+}
+
+interface UpdateEmployeeArgs {
+  input: UpdateEmployeeInput;
+}
+
+interface EmptyArgs {}
 
 export const employeeResolver = {
   Query: {
-    getEmployee: async (_: any, args: any, context: any) => {
+    getEmployee: async (_: unknown,
+  args: GetEmployeeArgs,
+  context: GraphQLContext) => {
       requireAdmin(context);
-      const {page, limit, search, status, sortBy} = args
-      return await getAllEmployee(page, limit, search, status,sortBy);
+      const {page, limit, search, searchBy} = args
+      return await getAllEmployee(page, limit, search, searchBy);
     },
-    getEmployeeById: async (_: any, args: { id: number }, context: any) => {
+    getEmployeeById: async (_: unknown,
+  args: EmployeeIdArgs,
+  context: GraphQLContext) => {
       requireAdmin(context);
       const id = args.id;
       return await employeeByID(Number(id));
@@ -20,7 +41,9 @@ export const employeeResolver = {
   },
 
   Mutation: {
-    createEmployee: (parent: any, args: any, context: any) => {
+    createEmployee: (_: unknown,
+  args: CreateEmployeeArgs,
+  context: GraphQLContext) => {
       requireAdmin(context)
       const data = args.input;
       console.log(args);
@@ -57,9 +80,12 @@ export const employeeResolver = {
         throw new Error("Enter valid characters");
       }
       const salaryRegex = /^(0|[1-9]\d*)(\.\d+)?$/;
+      if (data.salary === undefined || data.salary <= 0) {
+  throw new Error("Salary must be greater than 0");
+}
       if (!Number(data.salary)) {
         throw new Error("Salary is required !");
-      } else if (!salaryRegex.test(data.salary)) {
+      } else if (!salaryRegex.test(Number(data.salary))) {
         throw new Error("Enter only numeric characters");
       }
       const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -71,7 +97,9 @@ export const employeeResolver = {
       return addEmployee(data);
     },
 
-    updateEmployee: async (parent: any, args: any, context: any) => {
+    updateEmployee: async ( _: unknown,
+  args: UpdateEmployeeArgs,
+  context: GraphQLContext) => {
       requireAdmin(context)
       const { id, ...updatedData } = args.input;
       const stringPattern = /^[A-Za-z\s'-]+$/;
@@ -115,7 +143,9 @@ export const employeeResolver = {
       return await updateEmployee(id, updatedData);
     },
 
-    deleteEmployee: async (parent: any, args: { id: number }, context: any) => {
+    deleteEmployee: async (_: unknown,
+  args: EmployeeIdArgs,
+  context: GraphQLContext) => {
       requireAdmin(context)
       const id = args.id;
       return await deleteEmployee(id);

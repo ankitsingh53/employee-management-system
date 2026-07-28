@@ -25,6 +25,11 @@ interface FormError {
   newPassword?: string;
   confirmPassword?: string;
 }
+interface ForgotPasswordResponse {
+  forgotPassword: {
+    message?: string;
+  };
+}
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -34,7 +39,7 @@ const ForgotPassword = () => {
     newPassword: "",
     confirmPassword: "",
   });
-  const [forgotPassword] = useMutation(FORGOT_PASSWORD)
+  const [forgotPassword] = useMutation<ForgotPasswordResponse>(FORGOT_PASSWORD);
   const [errors, setErrors] = useState<FormError>({});
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -54,7 +59,7 @@ const ForgotPassword = () => {
       isValid = false;
     }
     if (!formData.newPassword.trim()) {
-      formErrors.newPassword= "New Password is required";
+      formErrors.newPassword = "New Password is required";
       isValid = false;
     } else if (!passwordRegex.test(formData.newPassword)) {
       formErrors.newPassword =
@@ -62,7 +67,7 @@ const ForgotPassword = () => {
       isValid = false;
     }
     if (!formData.confirmPassword.trim()) {
-      formErrors.confirmPassword= "Confirm Password is required";
+      formErrors.confirmPassword = "Confirm Password is required";
       isValid = false;
     } else if (formData.newPassword !== formData.confirmPassword) {
       formErrors.confirmPassword = "Passwords does not match";
@@ -78,26 +83,25 @@ const ForgotPassword = () => {
     if (!valid) return;
 
     try {
-      const {data} = await forgotPassword({
-        variables:{
-          input:{
-          email: formData.email,
-          password: formData.newPassword,
-        }
-      }
-      })
-      console.log(data)
-      if(data){
-        navigate("/user/login")
-        toast.success(`${data?.forgotPassword.message}`)
+      const { data } = await forgotPassword({
+        variables: {
+          input: {
+            email: formData.email,
+            password: formData.newPassword,
+          },
+        },
+      });
+      console.log(data);
+      if (data) {
+        navigate("/user/login");
+        toast.success(`${data?.forgotPassword.message}`);
       }
     } catch (error) {
-      if(error instanceof Error){
-        console.log(error)
-        toast.error(`${error.message}`)
+      if (error instanceof Error) {
+        console.log(error);
+        toast.error(`${error.message}`);
       }
     }
-
   };
 
   return (
@@ -109,10 +113,9 @@ const ForgotPassword = () => {
           justifyContent: "center",
           alignItems: "center",
           p: 3,
-          margin: 'auto',
+          margin: "auto",
         }}
       >
-        
         <Paper
           elevation={0}
           sx={{
@@ -120,7 +123,7 @@ const ForgotPassword = () => {
             maxWidth: 420,
           }}
         >
-        <BackButton path="/user/login"/>
+          <BackButton path="/user/login" />
           <Box component="form" noValidate onSubmit={handleSubmit}>
             <Typography
               sx={{
@@ -133,7 +136,7 @@ const ForgotPassword = () => {
             </Typography>
 
             <Typography color="text.secondary" sx={{ mb: 4 }}>
-             Change your password
+              Change your password
             </Typography>
 
             <Typography sx={{ mb: 1, fontWeight: 500 }}>Email</Typography>
@@ -157,7 +160,9 @@ const ForgotPassword = () => {
               </Typography>
             )}
 
-            <Typography sx={{ mb: 1, fontWeight: 500 }}>New Password</Typography>
+            <Typography sx={{ mb: 1, fontWeight: 500 }}>
+              New Password
+            </Typography>
 
             <TextField
               fullWidth
@@ -193,7 +198,9 @@ const ForgotPassword = () => {
               </Typography>
             )}
 
-            <Typography sx={{ mb: 1, fontWeight: 500 }}>Confirm Password</Typography>
+            <Typography sx={{ mb: 1, fontWeight: 500 }}>
+              Confirm Password
+            </Typography>
 
             <TextField
               fullWidth

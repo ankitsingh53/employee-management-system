@@ -3,7 +3,6 @@ import {
   Button,
   IconButton,
   InputAdornment,
-  Link,
   Paper,
   TextField,
   Typography,
@@ -37,6 +36,25 @@ interface LoginAdminResponse {
 interface LoginAdminVariables {
   input: FormData;
 }
+interface AdminQueryResult {
+  getMe: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    departmentId: string;
+    designation: string;
+    salary: number;
+    joiningDate: string;
+    role: "ADMIN" | "EMPLOYEE";
+    status: boolean;
+    department: Array<{
+      id: number;
+      department: string;
+    }>;
+  };
+}
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -48,7 +66,10 @@ const AdminLogin = () => {
     password: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
-  const [loginAdmin, { loading }] = useMutation<LoginAdminResponse, LoginAdminVariables>(LOGIN_ADMIN);
+  const [loginAdmin, { loading }] = useMutation<
+    LoginAdminResponse,
+    LoginAdminVariables
+  >(LOGIN_ADMIN);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
@@ -90,11 +111,13 @@ const AdminLogin = () => {
         },
       });
       if (data?.loginAdmin?.message) {
-        const adminData = await client.query({
+        const adminData = await client.query<AdminQueryResult>({
           query: GET_ADMIN,
           fetchPolicy: "network-only",
         });
-        dispatch(setAuth(adminData.data.getMe));
+        if (adminData && adminData.data) {
+          dispatch(setAuth(adminData?.data.getMe));
+        }
         navigate("/admin/dashboard");
         toast.success("Login Successfully", {
           autoClose: 2000,
@@ -244,24 +267,6 @@ const AdminLogin = () => {
                 {errors.password}
               </Typography>
             )}
-
-            {/* <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 1,
-            }}
-          >
-            <Link
-              href="#"
-              underline="hover"
-              sx={{
-                fontSize: "14px",
-              }}
-            >
-              Forgot Password?
-            </Link>
-          </Box> */}
 
             <Button
               fullWidth

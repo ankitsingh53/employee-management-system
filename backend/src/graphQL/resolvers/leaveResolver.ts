@@ -6,23 +6,45 @@ import {
   updateLeaveStatus,
   cancelLeave,
 } from "../../services/leaveService.js";
+import type {
+  ApplyLeaveArgs,
+  UpdateLeaveStatusArgs,
+  CancelLeaveArgs,
+} from "../types/leave.js";
+
+import type { GraphQLContext } from "../../types/context.js";
+
+interface EmptyArgs {}
+
+interface LeaveInput {
+  leaveType: string;
+  startDate: string;
+  endDate: string;
+  reason: string;
+}
 
 export const leaveResolver = {
   Query: {
-    myLeaves: async (_parent: any, _args: any, context: any) => {
-      requireAuth(context)
-      return await myLeaves(context.user.id);
+    myLeaves: async (_: unknown,
+  __: EmptyArgs,
+  context: GraphQLContext) => {
+     const user = requireAuth(context)
+      return await myLeaves(user.id);
     },
 
-    allLeaveRequests: async (parent:any, args:any, context:any) => {
+    allLeaveRequests: async (_: unknown,
+  __: EmptyArgs,
+  context: GraphQLContext) => {
       requireAdmin(context)
       return allLeaveRequests();
     },
   },
 
   Mutation: {
-    applyLeave: async (_parent: any, args: any, context: any) => {
-      requireAuth(context);
+    applyLeave: async (_: unknown,
+  args: ApplyLeaveArgs,
+  context: GraphQLContext) => {
+    const user =  requireAuth(context);
       const data = args.input;
       if (!data.leaveType.trim()) {
         throw new Error("Leave type is required");
@@ -39,15 +61,19 @@ export const leaveResolver = {
       if (new Date(data.endDate) < new Date(data.startDate)) {
         throw new Error("End date cannot be before start date");
       }
-      return await applyLeave(context.user.id, args.input);
+      return await applyLeave(user.id, args.input);
     },
 
-    updateLeaveStatus: async (_parent: any, args: any, context:any) => {
+    updateLeaveStatus: async (_: unknown,
+  args: UpdateLeaveStatusArgs,
+  context: GraphQLContext) => {
       requireAdmin(context)
       return await updateLeaveStatus(args.input);
     },
 
-    cancelLeave: async(parent:any, args:any, context:any)=>{
+    cancelLeave: async(_: unknown,
+  args: CancelLeaveArgs,
+  context: GraphQLContext)=>{
       requireAuth(context)
       return await cancelLeave(args.id)
     }

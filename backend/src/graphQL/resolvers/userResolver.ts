@@ -1,20 +1,52 @@
-import { exitingEmployee, savePassword } from "../../services/userService/userService.js";
+import {
+  exitingEmployee,
+  savePassword,
+} from "../../services/userService/userService.js";
 import { comparePassword, hashPassword } from "../../utils/bcrypt.js";
 import { saveEmployee } from "../../services/userService/userService.js";
 import { generateToken } from "../../utils/jwt.js";
 import { getMe } from "../../services/userService/userService.js";
 import { requireAuth } from "../../middleware/authorization.js";
+
+import type { GraphQLContext } from "../../types/context.js";
+
+interface EmptyArgs {}
+
+interface RegisterEmployeeInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
+interface RegisterEmployeeArgs {
+  input: RegisterEmployeeInput;
+}
+
+interface LoginEmployeeInput {
+  email: string;
+  password: string;
+}
+
+interface LoginEmployeeArgs {
+  input: LoginEmployeeInput;
+}
+
+interface ForgotPasswordArgs {
+  input: LoginEmployeeInput;
+}
+
 export const userResolver = {
   Query: {
-    getUser: async (parent: any, args: any, context: any) => {
-      const user = requireAuth(context)
+    getUser: async (_: unknown, __: EmptyArgs, context: GraphQLContext) => {
+      const user = requireAuth(context);
       const employeeDetails = await getMe(user.id);
       return employeeDetails;
     },
   },
 
   Mutation: {
-    registerEmployee: async (parent: any, args: any) => {
+    registerEmployee: async (_: unknown, args: RegisterEmployeeArgs) => {
       const { firstName, lastName, email, password } = args.input;
       const stringPattern = /^[A-Za-z\s'-]+$/;
       if (!firstName.trim()) {
@@ -61,9 +93,13 @@ export const userResolver = {
         }
       }
     },
-    loginEmployee: async (_: any, args: any, context: any) => {
+    loginEmployee: async (
+      _: unknown,
+      args: LoginEmployeeArgs,
+      context: GraphQLContext,
+    ) => {
       const { email, password } = args.input;
-      console.log(email, password)
+      console.log(email, password);
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
       if (!email.trim()) {
         throw new Error("Email is required!");
@@ -96,7 +132,7 @@ export const userResolver = {
         context.res.cookie("token", token, {
           httpOnly: true,
           secure: true,
-          sameSite: "Strict",
+          sameSite: "strict",
         });
         return {
           token,
@@ -110,11 +146,15 @@ export const userResolver = {
         }
       }
     },
-    logoutEmployee: async (parent: any, args: any, context: any) => {
+    logoutEmployee: async (
+      _: unknown,
+      __: EmptyArgs,
+      context: GraphQLContext,
+    ) => {
       context.res.clearCookie("token", {
         httpOnly: true,
         secure: true,
-        sameSite: "Strict",
+        sameSite: "strict",
       });
       return {
         success: true,
@@ -122,9 +162,9 @@ export const userResolver = {
       };
     },
 
-    forgotPassword: async(parent:any, args:any)=>{
-      const {email, password} = args.input;
-      console.log(email, password)
+    forgotPassword: async (_: unknown, args: ForgotPasswordArgs) => {
+      const { email, password } = args.input;
+      console.log(email, password);
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
       if (!email.trim()) {
         throw new Error("Email is required!");
@@ -154,6 +194,6 @@ export const userResolver = {
           console.log("An unexpected error occurred", error);
         }
       }
-    }
+    },
   },
 };
