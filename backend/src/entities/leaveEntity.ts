@@ -6,6 +6,7 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  type Relation
 } from "typeorm";
 
 import { Employee } from "./employee.entity.js";
@@ -48,7 +49,7 @@ export class Leave {
   @JoinColumn({
     name: "employeeId",
   })
-  employee!: Employee;
+  employee!: Relation<Employee>;
 
   @CreateDateColumn()
   createdAt!: Date;

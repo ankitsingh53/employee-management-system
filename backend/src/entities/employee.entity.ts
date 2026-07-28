@@ -8,6 +8,7 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  type Relation,
 } from "typeorm";
 import { Department } from "../entities/department.entity.js";
 import { Leave } from "./leaveEntity.js";
@@ -58,7 +59,7 @@ export class Employee {
   department!: Department[];
 
   @OneToMany(() => Leave, (leave) => leave.employee)
-  leaves!: Leave[];
+  leaves!: Relation<Leave[]>;
 
   @CreateDateColumn({
     type: "timestamp",
