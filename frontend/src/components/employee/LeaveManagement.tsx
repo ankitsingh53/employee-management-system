@@ -28,17 +28,26 @@ interface CancelLeaveResponse {
     message?: string;
   };
 }
+interface Leave {
+  id: number;
+  leaveType: string;
+  startDate: string;
+  endDate: string;
+  reason: string;
+  status: string;
+}
 
 interface UserLeaves {
-  myLeaves: Array<{
-    leave: {
-      id: string;
-      leaveType: string;
-      startDate: string;
-      endDate: string;
-      status: string;
-    };
-  }>;
+  myLeaves: Leave[];
+}
+
+interface UserLeaves {
+  myLeaves: Leave[]
+}
+interface ApplyLeaveResponse {
+  applyLeave: {
+    message: string;
+  };
 }
 
 const LeaveManagement = () => {
@@ -61,7 +70,7 @@ const LeaveManagement = () => {
     refetch,
   } = useQuery<UserLeaves>(MY_LEAVES);
 
-  const [applyLeave, { loading }] = useMutation<UserLeaves>(APPLY_LEAVE);
+  const [applyLeave, { loading }] = useMutation<ApplyLeaveResponse>(APPLY_LEAVE);
   const [cancelLeave] = useMutation<CancelLeaveResponse>(CANCEL_LEAVE);
 
   const handleChange = (e: any) => {

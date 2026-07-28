@@ -70,7 +70,7 @@ const Employees = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const { data, loading, error, refetch } = useQuery<EmployeeDataResponse>(
+  const { data, loading, error } = useQuery<EmployeeDataResponse>(
     GET_EMPLOYEE,
     {
       variables: {
