@@ -25,26 +25,29 @@ interface LeaveInput {
 
 export const leaveResolver = {
   Query: {
-    myLeaves: async (_: unknown,
-  __: EmptyArgs,
-  context: GraphQLContext) => {
-     const user = requireAuth(context)
+    myLeaves: async (_: unknown, __: EmptyArgs, context: GraphQLContext) => {
+      const user = requireAuth(context);
       return await myLeaves(user.id);
     },
 
-    allLeaveRequests: async (_: unknown,
-  __: EmptyArgs,
-  context: GraphQLContext) => {
-      requireAdmin(context)
-      return allLeaveRequests();
+    allLeaveRequests: async (
+      _: unknown,
+      args: any,
+      context: GraphQLContext,
+    ) => {
+      requireAdmin(context);
+
+      return allLeaveRequests(args);
     },
   },
 
   Mutation: {
-    applyLeave: async (_: unknown,
-  args: ApplyLeaveArgs,
-  context: GraphQLContext) => {
-    const user =  requireAuth(context);
+    applyLeave: async (
+      _: unknown,
+      args: ApplyLeaveArgs,
+      context: GraphQLContext,
+    ) => {
+      const user = requireAuth(context);
       const data = args.input;
       if (!data.leaveType.trim()) {
         throw new Error("Leave type is required");
@@ -64,18 +67,22 @@ export const leaveResolver = {
       return await applyLeave(user.id, args.input);
     },
 
-    updateLeaveStatus: async (_: unknown,
-  args: UpdateLeaveStatusArgs,
-  context: GraphQLContext) => {
-      requireAdmin(context)
+    updateLeaveStatus: async (
+      _: unknown,
+      args: UpdateLeaveStatusArgs,
+      context: GraphQLContext,
+    ) => {
+      requireAdmin(context);
       return await updateLeaveStatus(args.input);
     },
 
-    cancelLeave: async(_: unknown,
-  args: CancelLeaveArgs,
-  context: GraphQLContext)=>{
-      requireAuth(context)
-      return await cancelLeave(args.id)
-    }
+    cancelLeave: async (
+      _: unknown,
+      args: CancelLeaveArgs,
+      context: GraphQLContext,
+    ) => {
+      requireAuth(context);
+      return await cancelLeave(args.id);
+    },
   },
 };

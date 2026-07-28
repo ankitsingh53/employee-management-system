@@ -79,8 +79,6 @@ export const adminResolvers = {
       } catch (error) {
         if (error instanceof Error) {
           throw new Error(error.message);
-        } else {
-          console.log("An unexpected error occurred", error);
         }
       }
     },

@@ -18,8 +18,7 @@ export interface UpdateLeaveStatusInput {
 const leaveRepo = AppDataSource.getRepository(Leave);
 const employeeRepo = AppDataSource.getRepository(Employee);
 
-export const applyLeave = async ( userId: number,
-  data: LeaveInput) => {
+export const applyLeave = async (userId: number, data: LeaveInput) => {
   const employee = await employeeRepo.findOne({
     where: {
       id: userId,
@@ -60,27 +59,32 @@ export const myLeaves = async (userId: number) => {
 
 // ------Admin--------------
 
-export const allLeaveRequests = async () => {
-  console.log("service");
-  const data =  await leaveRepo.find({
+export const allLeaveRequests = async (data) => {
+  console.log(data.page);
+  const [leave, totalCount] = await leaveRepo.findAndCount({
     relations: {
       employee: {
-        department:true, 
-      }
+        department: true,
+      },
     },
     where: {
-      employee:{
-        status:true
-      }
+      employee: {
+        status: true,
+      },
     },
+    skip: (data.page - 1) * data.limit,
+    take: data.limit,
     order: {
       createdAt: "DESC",
     },
   });
-  if(!data){
-    throw new Error("No leave request found")
+  if (leave.length === 0) {
+    throw new Error("No leave request found");
   }
-  return data
+  return {
+    leaves: leave,
+    totalCount,
+  };
 };
 
 export const updateLeaveStatus = async (data: UpdateLeaveStatusInput) => {
@@ -88,9 +92,9 @@ export const updateLeaveStatus = async (data: UpdateLeaveStatusInput) => {
     where: {
       id: Number(data.id),
     },
-    relations:{
+    relations: {
       employee: true,
-    }
+    },
   });
 
   if (!leave) {
@@ -103,7 +107,7 @@ export const updateLeaveStatus = async (data: UpdateLeaveStatusInput) => {
   await sendLeaveStatusEmail(
     leave.employee.email,
     leave.employee.firstName,
-    leave.status
+    leave.status,
   );
 
   return {
@@ -111,24 +115,23 @@ export const updateLeaveStatus = async (data: UpdateLeaveStatusInput) => {
   };
 };
 
+export const cancelLeave = async (id: number) => {
+  const leave = await leaveRepo.findOne({
+    where: { id },
+  });
 
-export const cancelLeave = async(id:number)=>{
-const leave = await leaveRepo.findOne({
-  where: { id },
-});
+  console.log(leave);
+  if (!leave) {
+    throw new Error("Leave not found");
+  }
 
-console.log(leave)
-if (!leave) {
-  throw new Error("Leave not found");
-}
+  if (leave.status !== "PENDING") {
+    throw new Error("Only pending leave can be cancelled.");
+  }
 
-if (leave.status !== "PENDING") {
-  throw new Error("Only pending leave can be cancelled.");
-}
+  await leaveRepo.remove(leave);
 
-await leaveRepo.remove(leave);
-
-return {
-  message: "Leave cancelled successfully.",
+  return {
+    message: "Leave cancelled successfully.",
+  };
 };
-}

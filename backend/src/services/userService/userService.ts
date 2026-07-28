@@ -14,8 +14,8 @@ export const exitingEmployee = async (email: string) => {
     throw new Error("You are not an employee of this organisation");
   }
   if (!checkEmployee.status) {
-  throw new Error("Your account has been deactivated.");
-}
+    throw new Error("Your account has been deactivated.");
+  }
 
   return checkEmployee;
 };
@@ -39,16 +39,16 @@ export const saveEmployee = async (email: string, password: string) => {
 
 export const getMe = async (id: number) => {
   const data = await userRepo.findOne({
-    where: { 
-      id
-     },
-     relations:{
-      department:true,
-     }
+    where: {
+      id,
+    },
+    relations: {
+      department: true,
+    },
   });
   if (!data) {
-  throw new Error("Employee not found");
-}
+    throw new Error("Employee not found");
+  }
   return data;
 };
 
@@ -65,6 +65,6 @@ export const savePassword = async (email: string, password: string) => {
     await userRepo.save(getEmployee);
   }
   return {
-    message: "Password changed successfully"
+    message: "Password changed successfully",
   };
 };

@@ -11,44 +11,44 @@ const departmentRepo = await AppDataSource.getRepository(Department);
 
 const leaveRepo = await AppDataSource.getRepository(Leave);
 
-export const authAdmin = async(email:string)=>{
-    const getAdmin = authRepo.findOne({
-        where: {
-            email,
-            role: "ADMIN",
-        },
-    });
+export const authAdmin = async (email: string) => {
+  const getAdmin = authRepo.findOne({
+    where: {
+      email,
+      role: "ADMIN",
+    },
+  });
 
-    return getAdmin;
-}
+  return getAdmin;
+};
 
 export const getAdminDashboard = async () => {
-    const totalEmployees = await employeeRepo.count({
-  where: {
-    role: "EMPLOYEE",
-  },
-});
-const activeEmployees = await employeeRepo.count({
-  where: {
-    role: "EMPLOYEE",
-    status: true,
-  },
-});
-const totalDepartments = await departmentRepo.count();
+  const totalEmployees = await employeeRepo.count({
+    where: {
+      role: "EMPLOYEE",
+    },
+  });
+  const activeEmployees = await employeeRepo.count({
+    where: {
+      role: "EMPLOYEE",
+      status: true,
+    },
+  });
+  const totalDepartments = await departmentRepo.count();
 
-const pendingLeaves = await leaveRepo.count({
-  where: {
-    status: "PENDING",
-    employee:{
-      status:true,
-    }
-  },
-});
+  const pendingLeaves = await leaveRepo.count({
+    where: {
+      status: "PENDING",
+      employee: {
+        status: true,
+      },
+    },
+  });
 
-return {
-  totalEmployees,
-  activeEmployees,
-  totalDepartments,
-  pendingLeaves,
-};
+  return {
+    totalEmployees,
+    activeEmployees,
+    totalDepartments,
+    pendingLeaves,
+  };
 };

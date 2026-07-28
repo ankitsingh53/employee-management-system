@@ -1,6 +1,6 @@
 import { Paper, Typography, Box, Button, Chip } from "@mui/material";
 import { useQuery } from "@apollo/client/react";
-import { GET_ADMIN, GET_EMPLOYEE } from "../../apollo/queries/adminQuery";
+import { GET_ADMIN} from "../../apollo/queries/adminQuery";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "../../features/auth/authSlice";
 import { useEffect } from "react";
@@ -67,8 +67,6 @@ const AdminDashboard = () => {
 
   return (
     <Box>
-      {/* Heading */}
-
       <Typography variant="h4" sx={{ fontWeight: "bold" }}>
         Welcome Back, {user?.firstName}
       </Typography>
@@ -76,9 +74,6 @@ const AdminDashboard = () => {
       <Typography color="text.secondary" sx={{ mb: 4 }}>
         Here's what's happening today.
       </Typography>
-
-      {/* Dashboard Cards */}
-
       <Box
         sx={{
           display: "grid",
@@ -94,7 +89,7 @@ const AdminDashboard = () => {
           <PeopleIcon color="primary" />
 
           <Typography variant="h4" sx={{ fontWeight: "bold", mt: 1 }}>
-            {dashboardData?.adminDashboard.totalEmployees}
+            {dashboardData?.adminDashboard.totalEmployees || 0}
           </Typography>
 
           <Typography color="text.secondary">Total Employees</Typography>
@@ -104,7 +99,7 @@ const AdminDashboard = () => {
           <PersonIcon color="success" />
 
           <Typography variant="h4" sx={{ fontWeight: "bold", mt: 1 }}>
-            {dashboardData?.adminDashboard.activeEmployees}
+            {dashboardData?.adminDashboard.activeEmployees || 0}
           </Typography>
 
           <Typography color="text.secondary">Active Employees</Typography>
@@ -114,7 +109,7 @@ const AdminDashboard = () => {
           <BusinessIcon color="warning" />
 
           <Typography variant="h4" sx={{ fontWeight: "bold", mt: 1 }}>
-            {dashboardData?.adminDashboard.totalDepartments}
+            {dashboardData?.adminDashboard.totalDepartments || 0}
           </Typography>
 
           <Typography color="text.secondary">Total Departments</Typography>
@@ -124,7 +119,7 @@ const AdminDashboard = () => {
           <EventNoteIcon color="error" />
 
           <Typography variant="h4" sx={{ fontWeight: "bold", mt: 1 }}>
-            {dashboardData?.adminDashboard.pendingLeaves}
+            {dashboardData?.adminDashboard.pendingLeaves || 0}
           </Typography>
 
           <Typography color="text.secondary">Pending Leave Requests</Typography>

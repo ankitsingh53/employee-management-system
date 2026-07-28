@@ -2,6 +2,7 @@ import { AppDataSource } from "../../config/data-source.js";
 import { Department } from "../../entities/department.entity.js";
 import { Employee } from "../../entities/employee.entity.js";
 import type { EmployeeInput } from "../../graphQL/types/employee.js";
+import { sendRegisterMail } from "../../utils/email.js";
 
 const employeeRepo = await AppDataSource.getRepository(Employee);
 const departmentRepo = await AppDataSource.getRepository(Department);
@@ -115,11 +116,20 @@ export const addEmployee = async (data: EmployeeInput) => {
     joiningDate: data.joiningDate,
   });
   createEmployee.department = [department];
+
+  await sendRegisterMail(
+    createEmployee.email,
+    createEmployee.firstName,
+    createEmployee.lastName,
+  );
+
   return await employeeRepo.save(createEmployee);
 };
 
-export const updateEmployee = async ( id: number,
-    updatedData: EmployeeInput) => {
+export const updateEmployee = async (
+  id: number,
+  updatedData: EmployeeInput,
+) => {
   const getEmployee = await employeeRepo.findOne({
     where: {
       id,

@@ -27,3 +27,29 @@ export const sendLeaveStatusEmail = async (
     `,
   });
 };
+
+export const sendRegisterMail = async (
+  email: string,
+  firstName: string,
+  lastName: string
+) => {
+  await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Complete Registration",
+
+    html: `
+      <h2>Hello ${firstName},</h2>
+
+      <p>Complete your registration process and access the organisation portal.</b>.</p>
+      <p>Registration Details:</b>.</p>
+      <p>First Name: ${firstName}</b>.</p>
+      <p>Last Name: ${lastName}</b>.</p>
+      <p>Email: ${email}</b>.</p>
+
+      <p>Register with your secure password...</b>.</p>
+
+      <p>Regards,<br/>HR Team</p>
+    `,
+  });
+};

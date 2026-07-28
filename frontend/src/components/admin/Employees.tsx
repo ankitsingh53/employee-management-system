@@ -70,7 +70,7 @@ const Employees = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const { data, loading, error } = useQuery<EmployeeDataResponse>(
+  const { data, loading, error, refetch } = useQuery<EmployeeDataResponse>(
     GET_EMPLOYEE,
     {
       variables: {
@@ -85,8 +85,6 @@ const Employees = () => {
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
-  console.log(departmentData);
-
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -248,6 +246,8 @@ const Employees = () => {
           borderRadius: 2,
         }}
       >
+        {!data?.getEmployee ? <h1>Add Some Employee to organisation</h1>: (
+          <Box>
         <Table>
           <TableHead>
             <TableRow>
@@ -386,6 +386,9 @@ const Employees = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
           rowsPerPageOptions={[5, 7, 10]}
         />
+        </Box>
+        )}
+        
       </Paper>
     </Box>
   );

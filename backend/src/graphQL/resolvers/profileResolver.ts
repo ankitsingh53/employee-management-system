@@ -1,5 +1,9 @@
 import { requireAuth } from "../../middleware/authorization.js";
-import { getProfile, changePassword, updateProfile } from "../../services/profileService.js";
+import {
+  getProfile,
+  changePassword,
+  updateProfile,
+} from "../../services/profileService.js";
 import { comparePassword, hashPassword } from "../../utils/bcrypt.js";
 
 import type { GraphQLContext } from "../../types/context.js";
@@ -32,9 +36,11 @@ interface ChangePasswordArgs {
 
 export const profileResolver = {
   Query: {
-    viewProfile: async (_: unknown,
-  args: ViewProfileArgs,
-  context: GraphQLContext) => {
+    viewProfile: async (
+      _: unknown,
+      args: ViewProfileArgs,
+      context: GraphQLContext,
+    ) => {
       requireAuth(context);
       const id = args.id;
       return await getProfile(id);
@@ -42,17 +48,21 @@ export const profileResolver = {
   },
 
   Mutation: {
-    updateProfile: async (_: unknown,
-  args: UpdateProfileArgs,
-  context: GraphQLContext) => {
+    updateProfile: async (
+      _: unknown,
+      args: UpdateProfileArgs,
+      context: GraphQLContext,
+    ) => {
       const user = requireAuth(context);
-      return await updateProfile(user.id, args.input)
+      return await updateProfile(user.id, args.input);
     },
 
-    changePassword: async (_: unknown,
-  args: ChangePasswordArgs,
-  context: GraphQLContext) => {
-      const user = requireAuth(context)
+    changePassword: async (
+      _: unknown,
+      args: ChangePasswordArgs,
+      context: GraphQLContext,
+    ) => {
+      const user = requireAuth(context);
       const data = args.input;
       const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
       if (!data.currentPassword.trim()) {
@@ -69,7 +79,7 @@ export const profileResolver = {
           "Password must be minimum 4 characters, one letter & one digit",
         );
       }
-      return await changePassword(user.id, data);      
+      return await changePassword(user.id, data);
     },
   },
 };

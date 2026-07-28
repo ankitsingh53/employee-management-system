@@ -56,7 +56,7 @@ const AddEmployee = () => {
     joiningDate: "",
   });
 
-  const [addEmployee] = useMutation(ADD_EMPLOYEE);
+  const [addEmployee, {loading:mutationLoading}] = useMutation(ADD_EMPLOYEE);
   const { data, loading } = useQuery<DepartmentData>(GET_DEPARTMENT);
 
   const handleChange = (e: any): void => {
@@ -159,7 +159,7 @@ const AddEmployee = () => {
     }
   };
 
-  if (loading) {
+  if (loading || mutationLoading) {
     return <Loader />;
   }
 

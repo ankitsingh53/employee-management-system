@@ -88,8 +88,6 @@ export const userResolver = {
       } catch (error) {
         if (error instanceof Error) {
           throw new Error(error.message);
-        } else {
-          console.log("An unexpected error occurred", error);
         }
       }
     },
@@ -99,7 +97,6 @@ export const userResolver = {
       context: GraphQLContext,
     ) => {
       const { email, password } = args.input;
-      console.log(email, password);
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
       if (!email.trim()) {
         throw new Error("Email is required!");
@@ -141,8 +138,6 @@ export const userResolver = {
       } catch (error) {
         if (error instanceof Error) {
           throw new Error(error.message);
-        } else {
-          console.log("An unexpected error occurred", error);
         }
       }
     },
@@ -161,10 +156,8 @@ export const userResolver = {
         message: "Logged out successfully",
       };
     },
-
     forgotPassword: async (_: unknown, args: ForgotPasswordArgs) => {
       const { email, password } = args.input;
-      console.log(email, password);
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
       if (!email.trim()) {
         throw new Error("Email is required!");
@@ -190,8 +183,6 @@ export const userResolver = {
       } catch (error) {
         if (error instanceof Error) {
           throw new Error(error.message);
-        } else {
-          console.log("An unexpected error occurred", error);
         }
       }
     },

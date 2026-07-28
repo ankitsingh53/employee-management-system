@@ -10,6 +10,7 @@ import {
   TableRow,
   Button,
   Chip,
+  TablePagination,
 } from "@mui/material";
 
 import { ALL_LEAVE_REQUESTS } from "../../apollo/queries/adminQuery";
@@ -17,19 +18,41 @@ import { UPDATE_LEAVE_STATUS } from "../../apollo/mutations/adminMutation";
 import Loader from "../Loader";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 interface leaveRequestsData {
-  allLeaveRequests: Array<{
-    id: string;
-  }>;
+  allLeaveRequests: {
+    leaves: Array<{
+      id: string;
+    }>,
+    totalCount: number,
+  }
 }
 
 const ManageLeave = () => {
-  const { data, loading, refetch } =
-    useQuery<leaveRequestsData>(ALL_LEAVE_REQUESTS);
-
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(7);
+  const { data, loading, refetch } = useQuery<leaveRequestsData>(ALL_LEAVE_REQUESTS, {
+    variables: {
+      page: page + 1,
+      limit: rowsPerPage,
+    },
+    fetchPolicy: "cache-and-network",
+  });
   const [updateLeaveStatus, { loading: updating }] =
     useMutation(UPDATE_LEAVE_STATUS);
+  const leaveData = data?.allLeaveRequests;
+
+  const handleChangePage = (_event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setRowsPerPage(parseInt(event.target.value));
+
+    setPage(0);
+  };
 
   const handleStatus = async (id: number, status: "APPROVED" | "REJECTED") => {
     try {
@@ -46,13 +69,11 @@ const ManageLeave = () => {
       });
       refetch();
     } catch (error) {
-      if(error instanceof Error){
-        toast.error(`${error.message}`)
+      if (error instanceof Error) {
+        toast.error(`${error.message}`);
       }
     }
   };
-
-  refetch();
 
   if (loading) {
     return <Loader />;
@@ -60,7 +81,7 @@ const ManageLeave = () => {
   if (updating) {
     return <Loader />;
   }
-  if (!data?.allLeaveRequests?.length) {
+  if (!leaveData?.leaves.length) {
     return (
       <>
         <Box sx={{ marginBottom: "30px" }}>
@@ -122,7 +143,7 @@ const ManageLeave = () => {
           </TableHead>
 
           <TableBody>
-            {data.allLeaveRequests.map((leave: any) => (
+            {leaveData.leaves.map((leave: any) => (
               <TableRow key={leave.id}>
                 <TableCell>
                   {leave.employee.firstName} {leave.employee.lastName}
@@ -192,6 +213,15 @@ const ManageLeave = () => {
             ))}
           </TableBody>
         </Table>
+        <TablePagination
+          component="div"
+          count={leaveData.totalCount ?? 0}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[5, 7, 10]}
+        />
       </TableContainer>
     </>
   );

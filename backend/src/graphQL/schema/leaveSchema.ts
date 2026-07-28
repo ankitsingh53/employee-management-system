@@ -6,7 +6,7 @@ type Leave {
   endDate: String!
   reason: String!
   status: String!
-  employee: Employee!
+  employee: Employee
 }
 
 input ApplyLeaveInput {
@@ -25,9 +25,14 @@ type LeaveResponse {
   message: String!
 }
 
+type LeavePagination {
+ leaves: [Leave!]!
+ totalCount: Int!
+}
+
  type Query {
   myLeaves: [Leave!]!
-  allLeaveRequests: [Leave!]!
+  allLeaveRequests(page: Int!, limit: Int!): LeavePagination!
 }
 
  type Mutation {

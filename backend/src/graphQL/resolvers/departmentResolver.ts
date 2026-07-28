@@ -7,7 +7,6 @@ import { changeDepartment } from "../../services/departmentService.js";
 import { removeDepartment } from "../../services/departmentService.js";
 import type { GraphQLContext } from "../../types/context.js";
 
-
 interface EmptyArgs {}
 
 interface DeleteDepartmentArgs {
@@ -29,14 +28,22 @@ interface UpdateDepartmentArgs {
 
 export const departmentResolver = {
   Query: {
-    viewDepartment: async (_: unknown, args: EmptyArgs, context: GraphQLContext) => {
+    viewDepartment: async (
+      _: unknown,
+      args: EmptyArgs,
+      context: GraphQLContext,
+    ) => {
       requireAdmin(context);
       return await getAllDepartment();
     },
   },
   Mutation: {
-    addDepartment: async (_: unknown, args: DepartmentInput, context: GraphQLContext) => {
-      requireAdmin(context)
+    addDepartment: async (
+      _: unknown,
+      args: DepartmentInput,
+      context: GraphQLContext,
+    ) => {
+      requireAdmin(context);
       const { department } = args.input;
       const stringPattern = /^[A-Za-z\s'\-\/\\ ]+$/;
       if (!department.trim()) {
@@ -48,8 +55,12 @@ export const departmentResolver = {
       return await createDepartment(department);
     },
 
-    updateDepartment: async (_: unknown, args: UpdateDepartmentArgs, context: GraphQLContext) => {
-      requireAdmin(context)
+    updateDepartment: async (
+      _: unknown,
+      args: UpdateDepartmentArgs,
+      context: GraphQLContext,
+    ) => {
+      requireAdmin(context);
       const { id, ...data } = args.input;
       const stringPattern = /^[A-Za-z\s'\-\/\\ ]+$/;
       if (!data.department.trim()) {
@@ -61,8 +72,12 @@ export const departmentResolver = {
       return await changeDepartment(id, data);
     },
 
-    deleteDepartment: async (_: unknown, args: DeleteDepartmentArgs, context: GraphQLContext) => {
-      requireAdmin(context)
+    deleteDepartment: async (
+      _: unknown,
+      args: DeleteDepartmentArgs,
+      context: GraphQLContext,
+    ) => {
+      requireAdmin(context);
       const id = args.id;
       return await removeDepartment(id);
     },

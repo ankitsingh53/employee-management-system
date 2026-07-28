@@ -76,8 +76,9 @@ export const GET_DEPARTMENT = gql`
 `;
 
 export const ALL_LEAVE_REQUESTS = gql`
-query AllLeaveRequests {
-  allLeaveRequests {
+query AllLeaveRequests($page: Int!, $limit: Int!) {
+  allLeaveRequests(page: $page, limit: $limit){
+  leaves{
     id
     leaveType
     startDate
@@ -93,8 +94,10 @@ query AllLeaveRequests {
         id
         department
       }
+     }
     }
-  }
+    totalCount
+}
 }
 `;
 
