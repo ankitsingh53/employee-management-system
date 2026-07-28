@@ -5,14 +5,14 @@ import { requireAdmin, requireAuth } from "../../middleware/authorization.js";
 import { getAdminDashboard } from "../../services/admin/adminService.js";
 import type { GraphQLContext } from "../../types/context.js";
 
-interface LoginAdminArgs {
+export interface LoginAdminArgs {
   input: {
     email: string;
     password: string;
   };
 }
 
-interface EmptyArgs {}
+export interface EmptyArgs {}
 
 export const adminResolvers = {
   Query: {

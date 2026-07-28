@@ -7,19 +7,19 @@ import { changeDepartment } from "../../services/departmentService.js";
 import { removeDepartment } from "../../services/departmentService.js";
 import type { GraphQLContext } from "../../types/context.js";
 
-interface EmptyArgs {}
+export interface EmptyArgs {}
 
-interface DeleteDepartmentArgs {
+export interface DeleteDepartmentArgs {
   id: number;
 }
 
-interface DepartmentInput {
+export interface DepartmentInput {
   input: {
     department: string;
   };
 }
 
-interface UpdateDepartmentArgs {
+export interface UpdateDepartmentArgs {
   input: {
     id: number;
     department: string;

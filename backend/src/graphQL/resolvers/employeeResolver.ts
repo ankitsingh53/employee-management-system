@@ -12,15 +12,15 @@ import type {
   EmployeeIdArgs,
 } from "../types/employee.js";
 
-interface CreateEmployeeArgs {
+export interface CreateEmployeeArgs {
   input: EmployeeInput;
 }
 
-interface UpdateEmployeeArgs {
+export interface UpdateEmployeeArgs {
   input: UpdateEmployeeInput;
 }
 
-interface EmptyArgs {}
+export interface EmptyArgs {}
 
 export const employeeResolver = {
   Query: {

@@ -2,6 +2,7 @@ import { AppDataSource } from "../config/data-source.js";
 import { Leave } from "../entities/leaveEntity.js";
 import { Employee } from "../entities/employee.entity.js";
 import { sendLeaveStatusEmail } from "../utils/email.js";
+import type { LeavePaginationInput } from "../graphQL/resolvers/leaveResolver.js";
 
 export interface LeaveInput {
   leaveType: string;
@@ -59,7 +60,7 @@ export const myLeaves = async (userId: number) => {
 
 // ------Admin--------------
 
-export const allLeaveRequests = async (data) => {
+export const allLeaveRequests = async (data: LeavePaginationInput) => {
   console.log(data.page);
   const [leave, totalCount] = await leaveRepo.findAndCount({
     relations: {

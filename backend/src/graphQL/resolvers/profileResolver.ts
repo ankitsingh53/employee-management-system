@@ -8,29 +8,29 @@ import { comparePassword, hashPassword } from "../../utils/bcrypt.js";
 
 import type { GraphQLContext } from "../../types/context.js";
 
-interface EmptyArgs {}
+export interface EmptyArgs {}
 
-interface ViewProfileArgs {
+export interface ViewProfileArgs {
   id: number;
 }
 
-interface UpdateProfileInput {
+export interface UpdateProfileInput {
   firstName: string;
   lastName: string;
   email: string;
   phoneNumber: string;
 }
 
-interface UpdateProfileArgs {
+export interface UpdateProfileArgs {
   input: UpdateProfileInput;
 }
 
-interface ChangePasswordInput {
+export interface ChangePasswordInput {
   currentPassword: string;
   newPassword: string;
 }
 
-interface ChangePasswordArgs {
+export interface ChangePasswordArgs {
   input: ChangePasswordInput;
 }
 

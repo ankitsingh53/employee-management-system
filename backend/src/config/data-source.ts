@@ -1,19 +1,17 @@
 import { DataSource } from "typeorm";
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 import { Employee } from "../entities/employee.entity.js";
-import {Department} from "../entities/department.entity.js"
+import { Department } from "../entities/department.entity.js";
 import { Leave } from "../entities/leaveEntity.js";
 
-dotenv.config()
+dotenv.config();
 
 export const AppDataSource = new DataSource({
-    type: "postgres",
-    host: process.env.DB_HOST!,
-    port: Number(process.env.DB_PORT!),
-    username: process.env.DB_USERNAME!,
-    password: process.env.DB_PASSWORD!,
-    database: process.env.DB_DATABASE!,
-    synchronize: true,
-    // logging: true,
-    entities: [Employee, Department, Leave]
-})
+  type: "postgres",
+  url: process.env.DATABASE_URL!,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+  synchronize: false,
+  entities: [Employee, Department, Leave],
+});

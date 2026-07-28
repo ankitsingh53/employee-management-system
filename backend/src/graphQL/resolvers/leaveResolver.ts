@@ -14,13 +14,18 @@ import type {
 
 import type { GraphQLContext } from "../../types/context.js";
 
-interface EmptyArgs {}
+export interface EmptyArgs {}
 
-interface LeaveInput {
+export interface LeaveInput {
   leaveType: string;
   startDate: string;
   endDate: string;
   reason: string;
+}
+
+export interface LeavePaginationInput {
+  page: number;
+  limit: number;
 }
 
 export const leaveResolver = {
@@ -32,7 +37,7 @@ export const leaveResolver = {
 
     allLeaveRequests: async (
       _: unknown,
-      args: any,
+      args: LeavePaginationInput,
       context: GraphQLContext,
     ) => {
       requireAdmin(context);

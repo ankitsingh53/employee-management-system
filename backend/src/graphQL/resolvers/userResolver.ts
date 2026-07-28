@@ -10,29 +10,29 @@ import { requireAuth } from "../../middleware/authorization.js";
 
 import type { GraphQLContext } from "../../types/context.js";
 
-interface EmptyArgs {}
+export interface EmptyArgs {}
 
-interface RegisterEmployeeInput {
+export interface RegisterEmployeeInput {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
 }
 
-interface RegisterEmployeeArgs {
+export interface RegisterEmployeeArgs {
   input: RegisterEmployeeInput;
 }
 
-interface LoginEmployeeInput {
+export interface LoginEmployeeInput {
   email: string;
   password: string;
 }
 
-interface LoginEmployeeArgs {
+export interface LoginEmployeeArgs {
   input: LoginEmployeeInput;
 }
 
-interface ForgotPasswordArgs {
+export interface ForgotPasswordArgs {
   input: LoginEmployeeInput;
 }
 
