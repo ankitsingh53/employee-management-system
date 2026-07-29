@@ -50,6 +50,7 @@ export const employeeResolver = {
       args: CreateEmployeeArgs,
       context: GraphQLContext,
     ) => {
+      console.log("create employee resolver called")
       requireAdmin(context);
       const data = args.input;
       const stringPattern = /^[A-Za-z\s'-]+$/;
