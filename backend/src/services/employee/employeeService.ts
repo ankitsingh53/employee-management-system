@@ -121,11 +121,11 @@ export const addEmployee = async (data: EmployeeInput) => {
 
  const savedEmployee = await employeeRepo.save(createEmployee);
 
-  await sendRegisterMail(
-    createEmployee.email,
-    createEmployee.firstName,
-    createEmployee.lastName,
-  );
+  // await sendRegisterMail(
+  //   createEmployee.email,
+  //   createEmployee.firstName,
+  //   createEmployee.lastName,
+  // );
   return savedEmployee;
 };
 
