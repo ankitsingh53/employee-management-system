@@ -70,7 +70,7 @@ export const adminResolvers = {
         context.res.cookie("token", token, {
           httpOnly: true,
           secure: true,
-          sameSite: "strict",
+          sameSite: "none",
         });
         return {
           token,
