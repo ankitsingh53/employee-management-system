@@ -117,13 +117,16 @@ export const addEmployee = async (data: EmployeeInput) => {
   });
   createEmployee.department = [department];
 
+  
+
+ const savedEmployee = await employeeRepo.save(createEmployee);
+
   await sendRegisterMail(
     createEmployee.email,
     createEmployee.firstName,
     createEmployee.lastName,
   );
-
-  return await employeeRepo.save(createEmployee);
+  return savedEmployee;
 };
 
 export const updateEmployee = async (
